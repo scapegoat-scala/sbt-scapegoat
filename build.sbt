@@ -1,6 +1,6 @@
 name := "sbt-scapegoat"
 
-organization := "io.jenner"
+organization := "com.sksamuel.scapegoat"
 
 version := "0.1.0"
 
