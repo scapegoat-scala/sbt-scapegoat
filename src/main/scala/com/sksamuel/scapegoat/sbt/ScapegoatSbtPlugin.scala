@@ -4,7 +4,7 @@ import sbt.Keys._
 import sbt._
 
 /** @author Stephen Samuel */
-class ScapegoatSbtPlugin extends Plugin {
+object ScapegoatSbtPlugin extends sbt.Plugin {
 
   val OrgScoverage = "com.sksamuel"
   val ScalacArtifact = "scalac-scapegoat-plugin"
@@ -13,18 +13,17 @@ class ScapegoatSbtPlugin extends Plugin {
   object Keys {
   }
 
-  import Keys._
+  val ScapegoatCompile = config("scapegoat") extend Compile
 
-  lazy val ScapegoatCompile: Configuration = config("scapegoat")
-
-  val scapegoatSettings: Seq[Setting[_]] = {
+  lazy val scapegoatSettings: Seq[Setting[_]] = {
     inConfig(ScapegoatCompile)(Defaults.compileSettings) ++
       Seq(
         sources in ScapegoatCompile <<= (sources in Compile),
         sourceDirectory in ScapegoatCompile <<= (sourceDirectory in Compile),
         resourceDirectory in ScapegoatCompile <<= (resourceDirectory in Compile),
         resourceGenerators in ScapegoatCompile <<= (resourceGenerators in Compile),
-        externalDependencyClasspath in ScapegoatCompile <<= Classpaths.concat(externalDependencyClasspath in ScapegoatCompile, externalDependencyClasspath in Compile),
+        externalDependencyClasspath in ScapegoatCompile <<= Classpaths
+          .concat(externalDependencyClasspath in ScapegoatCompile, externalDependencyClasspath in Compile),
         internalDependencyClasspath in ScapegoatCompile <<= (internalDependencyClasspath in Compile),
         scalacOptions in ScapegoatCompile <++= update map {
           (report) =>
@@ -38,6 +37,10 @@ class ScapegoatSbtPlugin extends Plugin {
                   "-Xplugin:" + classpath.getAbsolutePath
                 )
             }
+        },
+        compile in Compile <<= (compile in Compile) map { analysis =>
+          println("[scapegoat] generating report")
+          analysis
         }
       )
   }
