@@ -6,9 +6,9 @@ import sbt._
 /** @author Stephen Samuel */
 object ScapegoatSbtPlugin extends sbt.Plugin {
 
-  val OrgScoverage = "com.sksamuel"
-  val ScalacArtifact = "scalac-scapegoat-plugin"
-  val ScoverageVersion = "0.1.0"
+  val GroupId = "com.sksamuel"
+  val ArtifactId = "scalac-scapegoat-plugin"
+  val Version = "0.1.0"
 
   object Keys {
   }
@@ -25,13 +25,16 @@ object ScapegoatSbtPlugin extends sbt.Plugin {
         externalDependencyClasspath in ScapegoatCompile <<= Classpaths
           .concat(externalDependencyClasspath in ScapegoatCompile, externalDependencyClasspath in Compile),
         internalDependencyClasspath in ScapegoatCompile <<= (internalDependencyClasspath in Compile),
+        libraryDependencies += {
+          GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % Version % ScapegoatCompile.name
+        },
         scalacOptions in ScapegoatCompile <++= update map {
           (report) =>
             // find all deps for this configuration
             val scapegoatDependencies = report matching configurationFilter(ScapegoatCompile.name)
             // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
-            scapegoatDependencies.find(_.getAbsolutePath.contains(ScalacArtifact)) match {
-              case None => throw new Exception(s"Fatal: $ScalacArtifact not in libraryDependencies")
+            scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
+              case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies")
               case Some(classpath) =>
                 Seq(
                   "-Xplugin:" + classpath.getAbsolutePath
