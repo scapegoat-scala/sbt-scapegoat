@@ -11,27 +11,20 @@ object ScapegoatSbtPlugin extends sbt.Plugin {
   val Version = "0.1.0"
 
   object Keys {
+    lazy val scapegoat = taskKey[Boolean]("scapegoat")
   }
 
-  lazy val ScapegoatCompile = config("scapegoat") extend Compile
+  import com.sksamuel.scapegoat.sbt.ScapegoatSbtPlugin.Keys._
 
   lazy val scapegoatSettings: Seq[Setting[_]] = {
-    inConfig(ScapegoatCompile)(Defaults.compileSettings) ++
       Seq(
-        sources in ScapegoatCompile <<= (sources in Compile),
-        sourceDirectory in ScapegoatCompile <<= (sourceDirectory in Compile),
-        resourceDirectory in ScapegoatCompile <<= (resourceDirectory in Compile),
-        resourceGenerators in ScapegoatCompile <<= (resourceGenerators in Compile),
-        externalDependencyClasspath in ScapegoatCompile <<= Classpaths
-          .concat(externalDependencyClasspath in ScapegoatCompile, externalDependencyClasspath in Compile),
-        internalDependencyClasspath in ScapegoatCompile <<= (internalDependencyClasspath in Compile),
         libraryDependencies += {
-          GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % Version % ScapegoatCompile.name
+          GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % Version % Compile.name
         },
-        scalacOptions in ScapegoatCompile <++= update map {
+        scalacOptions in Compile <++= update map {
           (report) =>
             // find all deps for this configuration
-            val scapegoatDependencies = report matching configurationFilter(ScapegoatCompile.name)
+            val scapegoatDependencies = report matching configurationFilter(Compile.name)
             // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
             scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
               case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies")
@@ -41,9 +34,10 @@ object ScapegoatSbtPlugin extends sbt.Plugin {
                 )
             }
         },
-        compile in Compile <<= (compile in Compile) map { analysis =>
-          println("[scapegoat] generating report")
-          analysis
+        scapegoat := {
+          val analyis = (compile in Compile).value
+          streams.value.log.info("[scapegoat] generating report")
+          true
         }
       )
   }
