@@ -6,14 +6,14 @@ import sbt._
 /** @author Stephen Samuel */
 object ScapegoatSbtPlugin extends sbt.Plugin {
 
-  val GroupId = "com.sksamuel"
+  val GroupId = "com.sksamuel.scapegoat"
   val ArtifactId = "scalac-scapegoat-plugin"
   val Version = "0.1.0"
 
   object Keys {
   }
 
-  val ScapegoatCompile = config("scapegoat") extend Compile
+  lazy val ScapegoatCompile = config("scapegoat") extend Compile
 
   lazy val scapegoatSettings: Seq[Setting[_]] = {
     inConfig(ScapegoatCompile)(Defaults.compileSettings) ++
