@@ -2,7 +2,7 @@ name := "sbt-scapegoat"
 
 organization := "com.sksamuel.scapegoat"
 
-version := "0.1.0"
+version := "0.2.0"
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf8")
 
@@ -13,10 +13,6 @@ javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
 scalaVersion := "2.10.4"
 
 sbtPlugin := true
-
-libraryDependencies ++= Seq(
-  "commons-io" % "commons-io" % "2.4"
-)
 
 publishTo := Some(Resolver.url("sbt-plugin-releases",
   new URL("http://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns))

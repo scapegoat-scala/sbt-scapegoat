@@ -1,7 +1,7 @@
 package com.sksamuel.scapegoat.sbt
 
-import sbt.Keys._
 import sbt._
+import Keys._
 
 /** @author Stephen Samuel */
 object ScapegoatSbtPlugin extends AutoPlugin {
@@ -10,13 +10,16 @@ object ScapegoatSbtPlugin extends AutoPlugin {
   val ArtifactId = "scalac-scapegoat-plugin"
   val Version = "0.2.0"
 
+  lazy val scapegoatCompile = config("scapegoat-compile") extend Compile
+
   object autoImport {
-    lazy val scapegoat = taskKey[Boolean]("scapegoat")
+    lazy val scapegoat = taskKey[Unit]("scapegoat")
   }
 
   import autoImport._
 
-  override lazy val buildSettings = Seq(
+  override def trigger = allRequirements
+  override lazy val projectSettings = Seq(
     libraryDependencies += {
       GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % Version % Compile.name
     },
@@ -28,15 +31,18 @@ object ScapegoatSbtPlugin extends AutoPlugin {
         scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
           case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies")
           case Some(classpath) =>
+            val target = crossTarget.value
+            streams.value.log.info(s"[scapegoat] will write data to [$target]")
             Seq(
-              "-Xplugin:" + classpath.getAbsolutePath
+              "-Xplugin:" + classpath.getAbsolutePath,
+              "-P:scapegoat:dataDir:" + target.getAbsolutePath + "/scoverage-data"
             )
         }
     },
     scapegoat := {
       val analyis = (compile in Compile).value
       streams.value.log.info("[scapegoat] generating report")
-      true
+      ()
     }
   )
 }
