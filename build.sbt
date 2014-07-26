@@ -8,7 +8,7 @@ scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf
 
 resolvers := ("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2") +: resolvers.value
 
-javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
+javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
 
 scalaVersion := "2.10.4"
 
