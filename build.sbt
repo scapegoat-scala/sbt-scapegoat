@@ -14,6 +14,8 @@ scalaVersion := "2.10.4"
 
 sbtPlugin := true
 
+libraryDependencies += "com.typesafe" % "config" % "1.2.1"
+
 publishTo := Some(Resolver.url("sbt-plugin-releases",
   new URL("http://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns))
 

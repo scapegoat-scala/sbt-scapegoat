@@ -23,10 +23,9 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     libraryDependencies += {
       GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % Version % Compile.name
     },
-    scalacOptions in Compile <++= update map {
-      (report) =>
-        // find all deps for this configuration
-        val scapegoatDependencies = report matching configurationFilter(Compile.name)
+    scalacOptions in Compile ++= {
+        // find all deps for the compile scope
+        val scapegoatDependencies = update.value matching configurationFilter(Compile.name)
         // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
         scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
           case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies")
