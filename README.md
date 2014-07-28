@@ -13,4 +13,7 @@ Add the plugin to your build with the following in project/plugins.sbt:
 addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "0.4.0")
 ```
 
-Then when SBT compiles your code, the scapegoat reports will be generated. You should find these inside target/scala-2.11/scapegoat-report.
+Then when SBT compiles your code, the scapegoat reports will be generated. You should find these inside 
+`target/scala-2.11/scapegoat-report`
+
+
