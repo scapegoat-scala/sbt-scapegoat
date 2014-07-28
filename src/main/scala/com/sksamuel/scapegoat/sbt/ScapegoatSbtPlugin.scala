@@ -8,7 +8,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   val GroupId = "com.sksamuel.scapegoat"
   val ArtifactId = "scalac-scapegoat-plugin"
-  val Version = "0.4.0"
+  val Version = "0.5.0"
 
   override def trigger = allRequirements
   override lazy val projectSettings = Seq(
