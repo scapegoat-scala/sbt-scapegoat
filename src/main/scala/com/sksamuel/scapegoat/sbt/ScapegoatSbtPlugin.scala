@@ -8,7 +8,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   val GroupId = "com.sksamuel.scapegoat"
   val ArtifactId = "scalac-scapegoat-plugin"
-  val Version = "0.7.0"
+  val Version = "0.90.0"
 
   object autoImport {
     lazy val disabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally")
