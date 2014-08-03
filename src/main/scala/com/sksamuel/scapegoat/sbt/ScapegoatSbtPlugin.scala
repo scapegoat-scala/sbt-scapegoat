@@ -8,27 +8,26 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   val GroupId = "com.sksamuel.scapegoat"
   val ArtifactId = "scalac-scapegoat-plugin"
-  val Version = "0.5.0"
+  val Version = "0.7.0"
+
+  object autoImport {
+    lazy val disabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally")
+  }
+
+  import autoImport._
 
   override def trigger = allRequirements
   override lazy val projectSettings = Seq(
+    disabledInspections := Nil,
+    autoCompilerPlugins := true,
     libraryDependencies ++= Seq(
-      GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % Version % Compile.name
+      compilerPlugin(GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % Version)
     ),
     scalacOptions in(Compile, compile) ++= {
-      // find all deps for the compile scope
-      val scapegoatDependencies = update.value matching configurationFilter(Compile.name)
-      // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
-      scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
-        case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies")
-        case Some(classpath) =>
-          val target = (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report"
-          streams.value.log.info(s"[scapegoat] setting output dir to [$target]")
-          Seq(
-            "-Xplugin:" + classpath.getAbsolutePath,
-            "-P:scapegoat:dataDir:" + target
-          )
-      }
+      Seq(
+        "-P:scapegoat:dataDir:" + target,
+        "-P:scapegoat:disabledInspections:" + disabledInspections.value.mkString(",")
+      )
     }
   )
 }
