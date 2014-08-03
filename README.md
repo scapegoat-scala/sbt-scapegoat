@@ -37,7 +37,7 @@ To do this add the following key to your sbt build, and include the simple name 
 
 Eg,
 
-```
+```scala
 disabledInspections := Seq("ExpressionAsStatement", "VarUse")
 ```
 
