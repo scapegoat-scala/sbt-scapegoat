@@ -1,7 +1,7 @@
 sbt-scapegoat
 =============
 
-sbt-scapegoat is a plugin for SBT that integrates the scapegoat static code analysis library. Find out more about scapegoat at the [scapegoat project page](https://github.com/sksamuel/scapegoat).
+sbt-scapegoat is a plugin for SBT that integrates the scapegoat [static code analysis library](http://en.wikipedia.org/wiki/Static_program_analysis). Find out more about scapegoat at the [scapegoat project page](https://github.com/sksamuel/scapegoat).
 
 #### How to use
 
