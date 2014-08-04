@@ -31,6 +31,10 @@ If the plugin is working properly then you should see output like this in your b
 [info] [scapegoat]: Written XML report [/home/sam/development/workspace/elastic4s/target/scala-2.11/scapegoat-report/scapegoat.xml]
 ```
 
+#### False positives
+
+Please note that scapegoat is a new project. While it's been tested on some common open source projects, there is still a good chance you'll find false positives. Please open up issues if you run into these so we can fix them.
+
 #### Disabling inspections
 
 Sometimes you might want to disable an inspection, should you disagree with it, or have a need to override it completely.
