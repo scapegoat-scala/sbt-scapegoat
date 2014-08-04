@@ -8,10 +8,12 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   val GroupId = "com.sksamuel.scapegoat"
   val ArtifactId = "scalac-scapegoat-plugin"
-  val Version = "0.90.0"
+  val Version = "0.90.1"
 
   object autoImport {
     lazy val disabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally")
+    lazy val scapegoatMaxErrors = settingKey[Int]("Maximum number of errors before the build will fail")
+    lazy val scapegoatMaxWarnings = settingKey[Int]("Maximum number of warnings before the build will fail")
   }
 
   import autoImport._
@@ -31,10 +33,13 @@ object ScapegoatSbtPlugin extends AutoPlugin {
         case Some(classpath) =>
           val target = (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report"
           streams.value.log.info(s"[scapegoat] setting output dir to [$target]")
+          val disabled = disabledInspections.value
+          if (disabled.size > 0)
+            streams.value.log.info(s"[scapegoat] disabling inspections: " + disabled.mkString(","))
           Seq(
             "-Xplugin:" + classpath.getAbsolutePath,
             "-P:scapegoat:dataDir:" + target,
-            "-P:scapegoat:disabledInspections:" + disabledInspections.value.mkString(",")
+            "-P:scapegoat:disabledInspections:" + disabled.mkString(":")
           )
       }
     }
