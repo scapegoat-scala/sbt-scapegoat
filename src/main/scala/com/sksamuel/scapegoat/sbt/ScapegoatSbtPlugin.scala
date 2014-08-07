@@ -8,9 +8,10 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   val GroupId = "com.sksamuel.scapegoat"
   val ArtifactId = "scalac-scapegoat-plugin"
-  val Version = "0.90.4"
+  val Version = "0.90.5"
 
   object autoImport {
+    lazy val myTask = taskKey[String]("qweqwe")
     lazy val disabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally")
     lazy val scapegoatMaxErrors = settingKey[Int]("Maximum number of errors before the build will fail")
     lazy val scapegoatMaxWarnings = settingKey[Int]("Maximum number of warnings before the build will fail")
