@@ -31,9 +31,9 @@ If the plugin is working properly then you should see output like this in your b
 [info] [scapegoat]: Written XML report [/home/sam/development/workspace/elastic4s/target/scala-2.11/scapegoat-report/scapegoat.xml]
 ```
 
-#### False positives
+#### Inspections list
 
-Please note that scapegoat is a new project. While it's been tested on some common open source projects, there is still a good chance you'll find false positives. Please open up issues if you run into these so we can fix them.
+The full list of inspections can be seen at the [scapegoat](https://github.com/sksamuel/scapegoat) main page.
 
 #### Disabling inspections
 
@@ -47,3 +47,10 @@ Eg,
 disabledInspections := Seq("ExpressionAsStatement", "VarUse")
 ```
 
+#### False positives
+
+Please note that scapegoat is a new project. While it's been tested on some common open source projects, there is still a good chance you'll find false positives. Please open up issues if you run into these so we can fix them.
+
+#### Reporting Issues
+
+If you have an error please do report it, but it would be helpful if the issues were logged at the [scapegoat](https://github.com/sksamuel/scapegoat) issues page, unless the bug is directly related to the plugin. Eg, inspection false positives or false negatives are errors in the scalac compiler plugin, not the sbt plugin.
