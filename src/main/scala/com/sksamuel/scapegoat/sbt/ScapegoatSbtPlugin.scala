@@ -14,6 +14,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     lazy val disabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally")
     lazy val scapegoatMaxErrors = settingKey[Int]("Maximum number of errors before the build will fail")
     lazy val scapegoatMaxWarnings = settingKey[Int]("Maximum number of warnings before the build will fail")
+    lazy val scapegoatMaxInfos = settingKey[Int]("Maximum number of infos before the build will fail")
     lazy val scapegoatConsoleOutput = settingKey[Boolean]("Output results of scan to the console during compilation")
     lazy val scapegoatOutputPath = settingKey[String]("Directory where reports will be written")
     lazy val scapegoatVerbose = settingKey[Boolean]("Verbose mode for inspections")
@@ -29,6 +30,9 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     ),
     scapegoatConsoleOutput := true,
     scapegoatVerbose := false,
+    scapegoatMaxInfos := -1,
+    scapegoatMaxWarnings := -1,
+    scapegoatMaxErrors := -1,
     scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
     scalacOptions in(Compile, compile) ++= {
       // find all deps for the compile scope
