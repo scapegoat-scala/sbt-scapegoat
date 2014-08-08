@@ -35,6 +35,12 @@ If the plugin is working properly then you should see output like this in your b
 
 The full list of inspections can be seen at the [scapegoat](https://github.com/sksamuel/scapegoat) main page.
 
+#### Console output
+
+sbt-scapegoat generates three sets of output. HTML and XML reports inside `target/scala-2.x/scapegoat-report` and also to the console during the build. The latter is useful so you don't have to open up files to see inspection warnings. However you can disable the console output if needed by setting the following key:
+
+`scapegoatConsoleOutput := false`
+
 #### Disabling inspections
 
 Sometimes you might want to disable an inspection, should you disagree with it, or have a need to override it completely.
