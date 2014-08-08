@@ -2,7 +2,7 @@ name := "sbt-scapegoat"
 
 organization := "com.sksamuel.scapegoat"
 
-version := "0.90.5"
+version := "0.90.6"
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf8")
 
