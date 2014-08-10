@@ -12,7 +12,7 @@ sbt-scapegoat is an [auto plugin](https://typesafe.com/blog/preview-of-upcoming-
 Add the plugin to your build with the following in project/plugins.sbt:
 
 ```scala
-addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "0.90.10")
+addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "0.90.11")
 ```
 
 That's it! Then when SBT compiles your code, the scapegoat reports will be generated. You should find these inside 
