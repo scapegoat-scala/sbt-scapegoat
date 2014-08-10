@@ -25,7 +25,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
   override def trigger = allRequirements
   override lazy val projectSettings = Seq(
     disabledInspections := Nil,
-    scapegoatVersion := "0.90.10",
+    scapegoatVersion := "0.90.11",
     libraryDependencies ++= Seq(
       GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % scapegoatVersion.value % Compile.name
     ),
