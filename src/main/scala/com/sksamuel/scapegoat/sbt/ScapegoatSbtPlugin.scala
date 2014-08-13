@@ -23,9 +23,9 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   import autoImport._
 
-  override def trigger = allRequirements
-  override lazy val projectSettings = Seq(
-    scapegoatVersion := "0.90.12",
+  //override def trigger = allRequirements
+  val scapegoatSettings = Seq(
+    scapegoatVersion := "0.90.14",
     libraryDependencies ++= Seq(
       GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % scapegoatVersion.value % Compile.name
     ),
@@ -64,6 +64,35 @@ object ScapegoatSbtPlugin extends AutoPlugin {
             "-P:scapegoat:enabledInspections:" + enabled.mkString(":")
           )
       }
+    },
+    (compile in Compile) := {
+      val analysis = (compile in Compile).value
+      val xmlPath = scapegoatOutputPath.value + "/scapegoat.xml"
+      val xml = scala.xml.XML.loadFile(xmlPath)
+      val infos = (xml \ "@infos").text.toInt
+      val warns = (xml \ "@warns").text.toInt
+      val errors = (xml \ "@errors").text.toInt
+
+      val maxInfos = scapegoatMaxInfos.value
+      val maxWarns = scapegoatMaxWarnings.value
+      val maxErrors = scapegoatMaxErrors.value
+
+      if (maxErrors >= 0 && infos > maxErrors) {
+        streams.value.log.info(s"[scapegoat] Build failed due to max errors exceed [errors=$errors, max=$maxErrors]")
+        throw new RuntimeException("Aborting build")
+      }
+
+      if (maxWarns >= 0 && infos > maxWarns) {
+        streams.value.log.info(s"[scapegoat] Build failed due to max warnings exceed [warns=$warns, max=$maxWarns]")
+        throw new RuntimeException("Aborting build")
+      }
+
+      if (maxInfos >= 0 && infos > maxInfos) {
+        streams.value.log.info(s"[scapegoat] Build failed due to max infos exceed [infos=$infos, max=$maxInfos]")
+        throw new RuntimeException("Aborting build")
+      }
+
+      analysis
     }
   )
 }
