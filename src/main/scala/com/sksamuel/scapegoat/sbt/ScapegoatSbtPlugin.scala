@@ -23,9 +23,9 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   import autoImport._
 
-  //override def trigger = allRequirements
-  val scapegoatSettings = Seq(
-    scapegoatVersion := "0.90.14",
+  override def trigger = allRequirements
+  override def projectSettings = Seq(
+    scapegoatVersion := "0.90.17",
     libraryDependencies ++= Seq(
       GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % scapegoatVersion.value % Compile.name
     ),
