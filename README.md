@@ -12,7 +12,7 @@ sbt-scapegoat is an [auto plugin](https://typesafe.com/blog/preview-of-upcoming-
 Add the plugin to your build with the following in project/plugins.sbt:
 
 ```scala
-addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "0.90.17")
+addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "0.91.0")
 ```
 
 That's it! Then when SBT compiles your code, the scapegoat reports will be generated. You should find these inside 
@@ -50,8 +50,18 @@ To do this add the following key to your sbt build, and include the simple name 
 Eg,
 
 ```scala
-disabledInspections := Seq("ExpressionAsStatement", "VarUse")
+scapegoatDisabledInspections := Seq("ExpressionAsStatement", "VarUse")
 ```
+
+#### Ignoring files
+
+Rather that turning off an inspection completely, you might just want to disable scapegoat scanning of a particular file. You can do this with regex matchers on the file path, eg:
+
+```scala
+scapegoatIgnoredFiles := Seq(".*/SomeScala.sclaa")
+```
+
+This is a regex that matches on the **full** path of the file, including what directory it happens to be in. For example, the full path might be `/home/sam/development/workspace/scapegoat/scalac-scapegoat-plugin/src/main/scala/com/sksamuel/scapegoat/inspections/VarUse.scala`. To exclude this file, we could use a regex like `.*/VarUse.scala`. Of course using this we could exclude whole packages, eg `.*/com/sksamuel/.*`.
 
 #### False positives
 
