@@ -11,8 +11,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   object autoImport {
     lazy val scapegoatVersion = settingKey[String]("The version of the scala plugin to use")
-    lazy val disabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally")
-    lazy val enabledInspections = settingKey[Seq[String]]("Inspections that are explicitly enabled")
+    lazy val scapegoatDisabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally")
+    lazy val scapegoatEnabledInspections = settingKey[Seq[String]]("Inspections that are explicitly enabled")
     lazy val scapegoatIgnoredFiles = settingKey[Seq[String]]("File patterns to ignore")
     lazy val scapegoatMaxErrors = settingKey[Int]("Maximum number of errors before the build will fail")
     lazy val scapegoatMaxWarnings = settingKey[Int]("Maximum number of warnings before the build will fail")
@@ -26,7 +26,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   override def trigger = allRequirements
   override def projectSettings = Seq(
-    scapegoatVersion := "0.90.17",
+    scapegoatVersion := "0.91.0",
     libraryDependencies ++= Seq(
       GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % scapegoatVersion.value % Compile.name
     ),
@@ -35,8 +35,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     scapegoatMaxInfos := -1,
     scapegoatMaxWarnings := -1,
     scapegoatMaxErrors := -1,
-    disabledInspections := Nil,
-    enabledInspections := Nil,
+    scapegoatDisabledInspections := Nil,
+    scapegoatEnabledInspections := Nil,
     scapegoatIgnoredFiles := Nil,
     scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
     scalacOptions in(Compile, compile) ++= {
@@ -49,13 +49,17 @@ object ScapegoatSbtPlugin extends AutoPlugin {
           val path = scapegoatOutputPath.value
           streams.value.log.info(s"[scapegoat] setting output dir to [$path]")
 
-          val disabled = disabledInspections.value
+          val disabled = scapegoatDisabledInspections.value
           if (disabled.size > 0)
             streams.value.log.info(s"[scapegoat] disabled inspections: " + disabled.mkString(","))
 
-          val enabled = enabledInspections.value
+          val enabled = scapegoatEnabledInspections.value
           if (enabled.size > 0)
             streams.value.log.info(s"[scapegoat] enabled inspections: " + enabled.mkString(","))
+
+          val ignoredFilePatterns = scapegoatIgnoredFiles.value
+          if (ignoredFilePatterns.size > 0)
+            streams.value.log.info(s"[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
 
           Seq(
             "-Xplugin:" + classpath.getAbsolutePath,
@@ -64,7 +68,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
             "-P:scapegoat:dataDir:" + path,
             "-P:scapegoat:disabledInspections:" + disabled.mkString(":"),
             "-P:scapegoat:enabledInspections:" + enabled.mkString(":"),
-            "-P:scapegoat:ignoredFiles:" + enabled.mkString(":")
+            "-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")
           )
       }
     }
