@@ -63,7 +63,7 @@ scapegoatIgnoredFiles := Seq(".*/SomeScala.sclaa")
 
 This is a regex that matches on the **full** path of the file, including what directory it happens to be in. For example, the full path might be `/home/sam/development/workspace/scapegoat/scalac-scapegoat-plugin/src/main/scala/com/sksamuel/scapegoat/inspections/VarUse.scala`. To exclude this file, we could use a regex like `.*/VarUse.scala`.
 
-Since this is just regex matching we can do whatever we want - for example we could exclude whole packages, eg `.*/com/sksamuel/.*` or we could exclude whole src trees, eg '.*/src_managed/main/scala/.*`
+Since this is just regex matching we can do whatever we want - for example we could exclude whole packages, eg `.*/com/sksamuel/.*` or we could exclude whole src trees, eg `.*/src_managed/main/scala/.*`
 
 **Note**: Remember to include the leading `.*/` if you are not matching a path as a literal.
 
