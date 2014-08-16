@@ -58,7 +58,7 @@ scapegoatDisabledInspections := Seq("ExpressionAsStatement", "VarUse")
 Rather that turning off an inspection completely, you might just want to disable scapegoat scanning of a particular file. You can do this with regex matchers on the file path, eg:
 
 ```scala
-scapegoatIgnoredFiles := Seq(".*/SomeScala.sclaa")
+scapegoatIgnoredFiles := Seq(".*/SomeScala.scala")
 ```
 
 This is a regex that matches on the **full** path of the file, including what directory it happens to be in. For example, the full path might be `/home/sam/development/workspace/scapegoat/scalac-scapegoat-plugin/src/main/scala/com/sksamuel/scapegoat/inspections/VarUse.scala`. To exclude this file, we could use a regex like `.*/VarUse.scala`.
