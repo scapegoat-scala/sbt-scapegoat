@@ -31,7 +31,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % scapegoatVersion.value % Compile.name
     ),
     scapegoatConsoleOutput := true,
-    scapegoatVerbose := false
+    scapegoatVerbose := true,
     scapegoatMaxInfos := -1,
     scapegoatMaxWarnings := -1,
     scapegoatMaxErrors := -1,
@@ -46,19 +46,22 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
         case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies")
         case Some(classpath) =>
+
+          val verbose = scapegoatVerbose.value
           val path = scapegoatOutputPath.value
-          streams.value.log.info(s"[scapegoat] setting output dir to [$path]")
+          if (verbose)
+            streams.value.log.info(s"[scapegoat] setting output dir to [$path]")
 
           val disabled = scapegoatDisabledInspections.value
-          if (disabled.size > 0)
+          if (disabled.size > 0 && verbose)
             streams.value.log.info(s"[scapegoat] disabled inspections: " + disabled.mkString(","))
 
           val enabled = scapegoatEnabledInspections.value
-          if (enabled.size > 0)
+          if (enabled.size > 0 && verbose)
             streams.value.log.info(s"[scapegoat] enabled inspections: " + enabled.mkString(","))
 
           val ignoredFilePatterns = scapegoatIgnoredFiles.value
-          if (ignoredFilePatterns.size > 0)
+          if (ignoredFilePatterns.size > 0 && verbose)
             streams.value.log.info(s"[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
 
           Seq(
