@@ -31,7 +31,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % scapegoatVersion.value % Compile.name
     ),
     scapegoatConsoleOutput := true,
-    scapegoatVerbose := true,
+    scapegoatVerbose := false
     scapegoatMaxInfos := -1,
     scapegoatMaxWarnings := -1,
     scapegoatMaxErrors := -1,
