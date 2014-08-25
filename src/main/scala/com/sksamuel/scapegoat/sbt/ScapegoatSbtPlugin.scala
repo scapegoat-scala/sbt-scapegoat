@@ -54,15 +54,15 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
           val disabled = scapegoatDisabledInspections.value
           if (disabled.size > 0 && verbose)
-            streams.value.log.info(s"[scapegoat] disabled inspections: " + disabled.mkString(","))
+            streams.value.log.info("[scapegoat] disabled inspections: " + disabled.mkString(","))
 
           val enabled = scapegoatEnabledInspections.value
           if (enabled.size > 0 && verbose)
-            streams.value.log.info(s"[scapegoat] enabled inspections: " + enabled.mkString(","))
+            streams.value.log.info("[scapegoat] enabled inspections: " + enabled.mkString(","))
 
           val ignoredFilePatterns = scapegoatIgnoredFiles.value
           if (ignoredFilePatterns.size > 0 && verbose)
-            streams.value.log.info(s"[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
+            streams.value.log.info("[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
 
           Seq(
             "-Xplugin:" + classpath.getAbsolutePath,
