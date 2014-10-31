@@ -65,14 +65,14 @@ object ScapegoatSbtPlugin extends AutoPlugin {
             streams.value.log.info("[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
 
           Seq(
-            "-Xplugin:" + classpath.getAbsolutePath,
-            "-P:scapegoat:verbose:" + scapegoatVerbose.value,
-            "-P:scapegoat:consoleOutput:" + scapegoatConsoleOutput.value,
-            "-P:scapegoat:dataDir:" + path,
-            "-P:scapegoat:disabledInspections:" + disabled.mkString(":"),
-            "-P:scapegoat:enabledInspections:" + enabled.mkString(":"),
-            "-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")
-          )
+            Some("-Xplugin:" + classpath.getAbsolutePath),
+            Some("-P:scapegoat:verbose:" + scapegoatVerbose.value),
+            Some("-P:scapegoat:consoleOutput:" + scapegoatConsoleOutput.value),
+            Some("-P:scapegoat:dataDir:" + path),
+            if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
+            if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
+            if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":"))
+          ).flatten
       }
     }
     //    (compile in Compile) := {
