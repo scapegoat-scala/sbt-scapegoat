@@ -52,15 +52,15 @@ object ScapegoatSbtPlugin extends AutoPlugin {
           if (verbose)
             streams.value.log.info(s"[scapegoat] setting output dir to [$path]")
 
-          val disabled = scapegoatDisabledInspections.value
+          val disabled = scapegoatDisabledInspections.value.filterNot(_.trim.isEmpty)
           if (disabled.size > 0 && verbose)
             streams.value.log.info("[scapegoat] disabled inspections: " + disabled.mkString(","))
 
-          val enabled = scapegoatEnabledInspections.value
+          val enabled = scapegoatEnabledInspections.value.filterNot(_.trim.isEmpty)
           if (enabled.size > 0 && verbose)
             streams.value.log.info("[scapegoat] enabled inspections: " + enabled.mkString(","))
 
-          val ignoredFilePatterns = scapegoatIgnoredFiles.value
+          val ignoredFilePatterns = scapegoatIgnoredFiles.value.filterNot(_.trim.isEmpty)
           if (ignoredFilePatterns.size > 0 && verbose)
             streams.value.log.info("[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
 
