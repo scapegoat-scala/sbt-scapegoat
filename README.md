@@ -67,6 +67,31 @@ Since this is just regex matching we can do whatever we want - for example we co
 
 **Note**: Remember to include the leading `.*/` if you are not matching a path as a literal.
 
+#### Suppressing Warnings by Method or Class
+
+You can suppress a specific warning by method or by class using the [`java.lang.SuppressWarnings`](http://docs.oracle.com/javase/7/docs/api/java/lang/SuppressWarnings.html) anotation.
+
+Use the simple name of the inspection to be ignored as the argument, or use `"all"` to suppress all `scapegoat` warnings in the specified scope.
+
+Some examples:
+```
+@SuppressWarnings(Array("all"))
+class Test {
+  def hello : Unit = {
+    val s : Any = "sammy"
+    println(s.asInstanceOf[String])
+  }
+} 
+
+class Test2 {
+  @SuppressWarnings(Array("AsInstanceOf"))
+  def hello : Unit = {
+    val s : Any = "sammy"
+    println(s.asInstanceOf[String])
+  }
+} 
+```
+
 #### False positives
 
 Please note that scapegoat is a new project. While it's been tested on some common open source projects, there is still a good chance you'll find false positives. Please open up issues if you run into these so we can fix them.
