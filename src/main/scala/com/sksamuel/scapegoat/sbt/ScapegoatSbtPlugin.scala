@@ -20,13 +20,14 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     lazy val scapegoatConsoleOutput = settingKey[Boolean]("Output results of scan to the console during compilation")
     lazy val scapegoatOutputPath = settingKey[String]("Directory where reports will be written")
     lazy val scapegoatVerbose = settingKey[Boolean]("Verbose mode for inspections")
+    lazy val scapegoatReports = settingKey[Seq[String]]("The report styles to generate")
   }
 
   import autoImport._
 
   override def trigger = allRequirements
   override def projectSettings = Seq(
-    scapegoatVersion := "0.94.5",
+    scapegoatVersion := "0.94.7",
     libraryDependencies ++= Seq(
       GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % scapegoatVersion.value % Compile.name
     ),
@@ -39,6 +40,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     scapegoatEnabledInspections := Nil,
     scapegoatIgnoredFiles := Nil,
     scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
+    scapegoatReports := Seq("all"),
     scalacOptions in(Compile, compile) ++= {
       // find all deps for the compile scope
       val scapegoatDependencies = update.value matching configurationFilter(Compile.name)
@@ -49,6 +51,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
           val verbose = scapegoatVerbose.value
           val path = scapegoatOutputPath.value
+          val reports = scapegoatReports.value
           if (verbose)
             streams.value.log.info(s"[scapegoat] setting output dir to [$path]")
 
@@ -72,6 +75,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
             if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
             if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
             if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":"))
+            if (scapegoatReports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":")
           ).flatten
       }
     }
