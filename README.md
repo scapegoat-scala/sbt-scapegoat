@@ -31,6 +31,16 @@ If the plugin is working properly then you should see output like this in your b
 [info] [scapegoat]: Written XML report [/home/sam/development/workspace/elastic4s/target/scala-2.11/scapegoat-report/scapegoat.xml]
 ```
 
+#### Turning off scapegoat for incremental compiles
+
+By default the plugin will run the analysis on every compile, whether that
+compile would compile all the sources or not. This can be convenient if you want
+to keep on top of the errors and fix them as you make them. However, the
+analysis can increase the compile time. If you would prefer faster compile
+times, you can disable scapegoat for incremental compiles triggered by the
+`compile` task by setting `scapegoatAlways` to `false`. You can always run a
+full analysis by running the `scapegoat` task.
+
 #### Inspections list
 
 The full list of inspections can be seen at the [scapegoat](https://github.com/sksamuel/scapegoat) main page.
