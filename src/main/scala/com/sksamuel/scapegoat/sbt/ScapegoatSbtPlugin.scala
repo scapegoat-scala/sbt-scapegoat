@@ -8,8 +8,16 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   val GroupId = "com.sksamuel.scapegoat"
   val ArtifactId = "scalac-scapegoat-plugin"
+  var scapegoating = false
+
+  def addScapegoatOptions = scapegoating
 
   object autoImport {
+    lazy val scapegoat = taskKey[Unit]("Generate a scapegoat report")
+    lazy val scapegoatEnableScapegoating = taskKey[Unit]("Internal use only")
+    lazy val scapegoatDisableScapegoating = taskKey[Unit]("Internal use only")
+
+    lazy val scapegoatAlways = settingKey[Boolean]("Whether or not to always scapegoat, even on incremental compiles")
     lazy val scapegoatVersion = settingKey[String]("The version of the scala plugin to use")
     lazy val scapegoatDisabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally")
     lazy val scapegoatEnabledInspections = settingKey[Seq[String]]("Inspections that are explicitly enabled")
@@ -27,6 +35,20 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   override def trigger = allRequirements
   override def projectSettings = Seq(
+    scapegoatEnableScapegoating := {
+      streams.value.log.debug("Enabling scapegoating")
+      scapegoating = true
+    },
+    scapegoatDisableScapegoating := {
+      streams.value.log.debug("Disabling scapegoating")
+      scapegoating = false
+    },
+    scapegoat := Def.sequential(
+      scapegoatEnableScapegoating,
+      (compile in Compile),
+      scapegoatDisableScapegoating
+    ).value,
+    scapegoatAlways := true,
     scapegoatVersion := "0.94.7",
     libraryDependencies ++= Seq(
       GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % scapegoatVersion.value % Compile.name
@@ -42,41 +64,47 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
     scapegoatReports := Seq("all"),
     scalacOptions in(Compile, compile) ++= {
-      // find all deps for the compile scope
-      val scapegoatDependencies = update.value matching configurationFilter(Compile.name)
-      // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
-      scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
-        case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies")
-        case Some(classpath) =>
+      val shouldScapegoat = addScapegoatOptions || scapegoatAlways.value
+      streams.value.log.debug(s"Recalculating scalacOptions: adding scapegoat options: $addScapegoatOptions")
+      if (!shouldScapegoat) {
+        Nil
+      }
+      else {
+        // find all deps for the compile scope
+        val scapegoatDependencies = update.value matching configurationFilter(Compile.name)
+        // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
+        scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
+          case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies")
+          case Some(classpath) =>
 
-          val verbose = scapegoatVerbose.value
-          val path = scapegoatOutputPath.value
-          val reports = scapegoatReports.value
-          if (verbose)
-            streams.value.log.info(s"[scapegoat] setting output dir to [$path]")
+            val verbose = scapegoatVerbose.value
+            val path = scapegoatOutputPath.value
+            val reports = scapegoatReports.value
+            if (verbose)
+              streams.value.log.info(s"[scapegoat] setting output dir to [$path]")
 
-          val disabled = scapegoatDisabledInspections.value.filterNot(_.trim.isEmpty)
-          if (disabled.size > 0 && verbose)
-            streams.value.log.info("[scapegoat] disabled inspections: " + disabled.mkString(","))
+            val disabled = scapegoatDisabledInspections.value.filterNot(_.trim.isEmpty)
+            if (disabled.size > 0 && verbose)
+              streams.value.log.info("[scapegoat] disabled inspections: " + disabled.mkString(","))
 
-          val enabled = scapegoatEnabledInspections.value.filterNot(_.trim.isEmpty)
-          if (enabled.size > 0 && verbose)
-            streams.value.log.info("[scapegoat] enabled inspections: " + enabled.mkString(","))
+            val enabled = scapegoatEnabledInspections.value.filterNot(_.trim.isEmpty)
+            if (enabled.size > 0 && verbose)
+              streams.value.log.info("[scapegoat] enabled inspections: " + enabled.mkString(","))
 
-          val ignoredFilePatterns = scapegoatIgnoredFiles.value.filterNot(_.trim.isEmpty)
-          if (ignoredFilePatterns.size > 0 && verbose)
-            streams.value.log.info("[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
+            val ignoredFilePatterns = scapegoatIgnoredFiles.value.filterNot(_.trim.isEmpty)
+            if (ignoredFilePatterns.size > 0 && verbose)
+              streams.value.log.info("[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
 
-          Seq(
-            Some("-Xplugin:" + classpath.getAbsolutePath),
-            Some("-P:scapegoat:verbose:" + scapegoatVerbose.value),
-            Some("-P:scapegoat:consoleOutput:" + scapegoatConsoleOutput.value),
-            Some("-P:scapegoat:dataDir:" + path),
-            if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
-            if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
-            if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":"))
-            if (scapegoatReports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":")
-          ).flatten
+            Seq(
+              Some("-Xplugin:" + classpath.getAbsolutePath),
+              Some("-P:scapegoat:verbose:" + scapegoatVerbose.value),
+              Some("-P:scapegoat:consoleOutput:" + scapegoatConsoleOutput.value),
+              Some("-P:scapegoat:dataDir:" + path),
+              if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
+              if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
+              if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":"))
+              if (scapegoatReports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":")
+            ).flatten
       }
     }
     //    (compile in Compile) := {
