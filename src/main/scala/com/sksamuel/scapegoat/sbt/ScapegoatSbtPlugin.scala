@@ -74,8 +74,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
             Some("-P:scapegoat:dataDir:" + path),
             if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
             if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
-            if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":"))
-            if (scapegoatReports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":")
+            if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")),
+            if (reports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":"))
           ).flatten
       }
     }
