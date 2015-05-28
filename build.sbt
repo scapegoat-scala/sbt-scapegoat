@@ -2,7 +2,7 @@ name := "sbt-scapegoat"
 
 organization := "com.sksamuel.scapegoat"
 
-version := "0.94.5"
+version := "0.94.7"
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf8")
 
@@ -10,7 +10,7 @@ resolvers := ("releases" at "https://oss.sonatype.org/service/local/staging/depl
 
 javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.10.5"
 
 sbtPlugin := true
 
