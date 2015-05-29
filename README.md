@@ -15,12 +15,11 @@ Add the plugin to your build with the following in project/plugins.sbt:
 addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "0.94.6")
 ```
 
-That's it! Then when SBT compiles your code, the scapegoat reports will be generated. You should find these inside 
-`target/scala-2.11/scapegoat-report`
-
-If the plugin is working properly then you should see output like this in your build log:
+That's it! You can now generate the scapegoat reports using the `scapegoat`
+task:
 
 ```
+> scapegoat
 [info] [scapegoat] setting output dir to [/home/sam/development/workspace/elastic4s/target/scala-2.11/scapegoat-report]
 [info] [scapegoat] disabling inspections: ExpressionAsStatement,VarUse
 [info] Compiling 47 Scala sources to /home/sam/development/workspace/elastic4s/target/scala-2.11/classes...
@@ -30,6 +29,8 @@ If the plugin is working properly then you should see output like this in your b
 [info] [scapegoat]: Written HTML report [/home/sam/development/workspace/elastic4s/target/scala-2.11/scapegoat-report/scapegoat.html]
 [info] [scapegoat]: Written XML report [/home/sam/development/workspace/elastic4s/target/scala-2.11/scapegoat-report/scapegoat.xml]
 ```
+
+You should find the reports inside `target/scala-2.11/scapegoat-report`.
 
 #### Inspections list
 
