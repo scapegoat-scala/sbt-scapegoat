@@ -40,6 +40,7 @@ The full list of inspections can be seen at the [scapegoat](https://github.com/s
 
 sbt-scapegoat generates three sets of output. HTML and XML reports inside `target/scala-2.x/scapegoat-report` and also to the console during the build. The latter is useful so you don't have to open up files to see inspection warnings. However you can disable the console output if needed by setting the following key:
 
+`import com.sksamuel.scapegoat.sbt.ScapegoatSbtPlugin.autoImport._`
 `scapegoatConsoleOutput := false`
 
 #### Disabling inspections
