@@ -66,7 +66,9 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                 Some("-P:scapegoat:verbose:" + scapegoatVerbose.value),
                 Some("-P:scapegoat:consoleOutput:" + scapegoatConsoleOutput.value),
                 Some("-P:scapegoat:dataDir:" + path),
+                // FIXME: the corresponding option in scalac-scapegoat has a different name!
                 if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
+                // FIXME: no corresponding 'enabledInspections' option in scalac-scapegoat!
                 if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
                 if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")),
                 if (reports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":"))
