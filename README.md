@@ -96,6 +96,41 @@ class Test2 {
 } 
 ```
 
+#### Writing custom inspections
+
+Scapegoat supports custom inspections, for example to enforce a
+project-specific rule.
+
+How to write and test the inspection class is out of scope of this Readme, but
+you can take a look at the source code for
+[the inspections which are included in the scalac-scapegoat-plugin project](https://github.com/sksamuel/scalac-scapegoat-plugin/tree/master/src/main/scala/com/sksamuel/scapegoat/inspections).
+
+The `scapegoatCustomInspections` SBT SettingKey needs to list all the custom inspections by their fully-qualified class name. For example, add something like the following to your `build.sbt`:
+
+    scapegoatCustomInspections := List(
+      "my.inspections.InspectionOne",
+      "my.inspections.InspectionOne")
+
+The `scapegoatCustomInspectionsClasspath` SBT SettingKey needs to list the classpath entries at which your inspection classes can be loaded. If your inspections have come from a compiled JAR, then you can list its file location here. (There is not currently automatic support for using an Ivy-provided JAR dependency here. You may be able to do this by accessing the "update" SBT TaskKey. There is some code along these lines in [sbt-scapegoat](https://github.com/sksamuel/sbt-scapegoat/blob/ae4231d1341eeece323e111c757d57d904e66f7b/src/main/scala/com/sksamuel/scapegoat/sbt/ScapegoatSbtPlugin.scala#L41) which you can use for inspiration.)
+
+    scapegoatCustomInspectionsClasspath := List(new File("lib/my-inpections-1.0.jar"))
+
+If you would like to have the inspection classes in the same project, you can add them to the SBT `project/` build. Put your inspection classes under `project/src/main/scala` and use the following for the `scapegoatCustomInspectionsClasspath `:
+
+
+      scapegoatCustomInspectionsClasspath := List({
+        // Get the CP dir for the inspections.
+        // There might be a better way to get this from SBT, but I can't find it.
+        // You can always hardcode "./project/target/scala-2.10/sbt-0.13/classes/" if you don't
+        // like this.
+        classOf[LoggingArgumentsMismatch].getClassLoader match {
+          case urlLoader: java.net.URLClassLoader => urlLoader.getURLs.toList match {
+            case List(u) if u.getProtocol == "file" =>
+              new File(u.toURI)
+          }
+        }
+      }),
+
 #### False positives
 
 Please note that scapegoat is a new project. While it's been tested on some common open source projects, there is still a good chance you'll find false positives. Please open up issues if you run into these so we can fix them.

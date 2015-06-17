@@ -14,8 +14,10 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
     lazy val scapegoat = taskKey[Unit]("Run scapegoat quality checks")
     lazy val scapegoatVersion = settingKey[String]("The version of the scala plugin to use")
-    lazy val scapegoatDisabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally")
-    lazy val scapegoatEnabledInspections = settingKey[Seq[String]]("Inspections that are explicitly enabled")
+    lazy val scapegoatDisabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally, by simple name")
+    lazy val scapegoatEnabledInspections = settingKey[Seq[String]]("Inspections that are explicitly enabled, by simple name")
+    lazy val scapegoatCustomInspections = settingKey[Seq[String]]("Externally defined inspections to load, by full class name. Each class should implement com.sksamuel.scapegoat.Inspection.")
+    lazy val scapegoatCustomInspectionsClasspath = settingKey[Seq[File]]("Classpaths from which to load custom inspections.")
     lazy val scapegoatIgnoredFiles = settingKey[Seq[String]]("File patterns to ignore")
     lazy val scapegoatMaxErrors = settingKey[Int]("Maximum number of errors before the build will fail")
     lazy val scapegoatMaxWarnings = settingKey[Int]("Maximum number of warnings before the build will fail")
@@ -57,6 +59,23 @@ object ScapegoatSbtPlugin extends AutoPlugin {
               if (enabled.nonEmpty && verbose)
                 streams.value.log.info("[scapegoat] enabled inspections: " + enabled.mkString(","))
 
+              val custom = scapegoatCustomInspections.value.filterNot(_.trim.isEmpty)
+              if (custom.nonEmpty && verbose)
+                streams.value.log.info("[scapegoat] custom inspections: " + custom.mkString(","))
+
+              val customCp = scapegoatCustomInspectionsClasspath.value
+                .map { file =>
+                  var uri = file.toURI.toString
+                  // Catch a tricky error: URLClassLoader will only treat dirs as such if they have a
+                  // trailing /
+                  if (file.isDirectory && !uri.endsWith("/")) {
+                    uri += "/"
+                  }
+                  uri
+                }
+              if (customCp.nonEmpty && verbose)
+                streams.value.log.info("[scapegoat] custom inspections classpath: " + customCp.mkString(";"))
+
               val ignoredFilePatterns = scapegoatIgnoredFiles.value.filterNot(_.trim.isEmpty)
               if (ignoredFilePatterns.nonEmpty && verbose)
                 streams.value.log.info("[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
@@ -70,6 +89,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                 if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
                 // FIXME: no corresponding 'enabledInspections' option in scalac-scapegoat!
                 if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
+                if (custom.isEmpty) None else Some("-P:scapegoat:customInspections:" + custom.mkString(":")),
+                if (customCp.isEmpty) None else Some("-P:scapegoat:customInspectionsClasspath:" + customCp.mkString(";")),
                 if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")),
                 if (reports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":"))
               ).flatten
@@ -89,6 +110,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       scapegoatMaxErrors := -1,
       scapegoatDisabledInspections := Nil,
       scapegoatEnabledInspections := Nil,
+      scapegoatCustomInspections := Nil,
+      scapegoatCustomInspectionsClasspath := Nil,
       scapegoatIgnoredFiles := Nil,
       scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
       scapegoatReports := Seq("all"),
