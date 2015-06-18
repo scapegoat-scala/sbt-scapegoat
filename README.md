@@ -115,15 +115,15 @@ The `scapegoatCustomInspectionsClasspath` SBT SettingKey needs to list the class
 
     scapegoatCustomInspectionsClasspath := List(new File("lib/my-inpections-1.0.jar"))
 
-If you would like to have the inspection classes in the same project, you can add them to the SBT `project/` build. Put your inspection classes under `project/src/main/scala` and use the following for the `scapegoatCustomInspectionsClasspath `:
+If you would like to have the inspection classes in the same project, you can add them to the SBT `project/` build. Put your inspection classes under `project` (e.g. `project/src/main/scala/my/inspections/MyInspection.scala`) and use the following for the `scapegoatCustomInspectionsClasspath`:
 
 
       scapegoatCustomInspectionsClasspath := List({
-        // Get the CP dir for the inspections.
+        // Get the classpath dir of the SBT build to allow loading the inspections.
         // There might be a better way to get this from SBT, but I can't find it.
         // You can always hardcode "./project/target/scala-2.10/sbt-0.13/classes/" if you don't
         // like this.
-        classOf[LoggingArgumentsMismatch].getClassLoader match {
+        classOf[my.inspections.MyInspection].getClassLoader match {
           case urlLoader: java.net.URLClassLoader => urlLoader.getURLs.toList match {
             case List(u) if u.getProtocol == "file" =>
               new File(u.toURI)
