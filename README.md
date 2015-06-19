@@ -3,6 +3,8 @@ sbt-scapegoat
 
 sbt-scapegoat is a plugin for SBT that integrates the scapegoat [static code analysis library](http://en.wikipedia.org/wiki/Static_program_analysis). Find out more about scapegoat at the [scapegoat project page](https://github.com/sksamuel/scapegoat).
 
+[![Join the chat at https://gitter.im/sksamuel/scapegoat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sksamuel/scapegoat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 #### How to use
 
 sbt-scapegoat is an [auto plugin](https://typesafe.com/blog/preview-of-upcoming-sbt-10-features-read-about-the-new-plugins). This means you need SBT 0.13.5 or higher. If you are using an earlier 0.13.x build, you should be able to upgrade to 0.13.5 without any issues.
