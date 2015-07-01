@@ -63,16 +63,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
               if (custom.nonEmpty && verbose)
                 streams.value.log.info("[scapegoat] custom inspections: " + custom.mkString(","))
 
-              val customCp = scapegoatCustomInspectionsClasspath.value
-                .map { file =>
-                  var uri = file.toURI.toString
-                  // Catch a tricky error: URLClassLoader will only treat dirs as such if they have a
-                  // trailing /
-                  if (file.isDirectory && !uri.endsWith("/")) {
-                    uri += "/"
-                  }
-                  uri
-                }
+              val customCp = scapegoatCustomInspectionsClasspath.value.map(_.toURI.toString)
               if (customCp.nonEmpty && verbose)
                 streams.value.log.info("[scapegoat] custom inspections classpath: " + customCp.mkString(";"))
 
