@@ -93,7 +93,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
         clean.value
         (compile in Scapegoat).value
       },
-      scapegoatVersion := "1.0.0",
+      scapegoatVersion := "1.1.0",
       scapegoatConsoleOutput := true,
       scapegoatVerbose := true,
       scapegoatMaxInfos := -1,

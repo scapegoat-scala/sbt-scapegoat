@@ -14,7 +14,7 @@ sbt-scapegoat is an [auto plugin](https://typesafe.com/blog/preview-of-upcoming-
 Add the plugin to your build with the following in project/plugins.sbt:
 
 ```scala
-addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.0")
+addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.1.0")
 ```
 
 That's it! You can now generate the scapegoat reports using the `scapegoat`
