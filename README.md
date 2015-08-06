@@ -96,40 +96,63 @@ class Test2 {
 } 
 ```
 
-#### Writing custom inspections
+#### Using custom inspections
 
 Scapegoat supports custom inspections, for example to enforce a
 project-specific rule.
 
-How to write and test the inspection class is out of scope of this Readme, but
-you can take a look at the source code for
-[the inspections which are included in the scalac-scapegoat-plugin project](https://github.com/sksamuel/scalac-scapegoat-plugin/tree/master/src/main/scala/com/sksamuel/scapegoat/inspections).
+How to write and test the inspection class is described in [the scalac-scapegoat-plugin CustomInspections readme](https://github.com/sksamuel/scalac-scapegoat-plugin/blob/master/CustomInspections.md)
 
-The `scapegoatCustomInspections` SBT SettingKey needs to list all the custom inspections by their fully-qualified class name. For example, add something like the following to your `build.sbt`:
+Your inspections need to be compiled before the code in the rest of your project is compiled (like macros). You can achieve this with a project set up like the following:
 
-    scapegoatCustomInspections := List(
-      "my.inspections.InspectionOne",
-      "my.inspections.InspectionOne")
+    object MyBuild extends Build {
+    
+      val scalaV = "2.11.6"
+    
+      lazy val project = Project("MyProject", file("."))
+        // "aggregate" causes these child projects to be built and tested whenever
+        // the parent project is built and tested.
+        .aggregate(inspections)
+        .settings(
+          scalaVersion := scalaV,    
+          // You must list here all the custom inspections by their fully-qualified class name:
+          scapegoatCustomInspections := List(
+            "my.inspections.InspectionOne",
+            "my.inspections.InspectionTwo"),
+          scapegoatCustomInspectionsClasspath := List(
+            (classDirectory in inspections in Scapegoat).value))
+        .dependsOn(inspections)
+    
+      lazy val inspections = Project("inspections", file("inspections"))
+        .settings(
+          libraryDependencies ++= List(
+            "com.sksamuel.scapegoat" %% "scalac-scapegoat-plugin" % "1.1.0",
+            "org.scala-lang" % "scala-compiler" % scalaV),
+          scalaVersion := scalaV)
+    }
 
-The `scapegoatCustomInspectionsClasspath` SBT SettingKey needs to list the classpath entries at which your inspection classes can be loaded. If your inspections have come from a compiled JAR, then you can list its file location here. (There is not currently automatic support for using an Ivy-provided JAR dependency here. You may be able to do this by accessing the "update" SBT TaskKey. There is some code along these lines in [sbt-scapegoat](https://github.com/sksamuel/sbt-scapegoat/blob/ae4231d1341eeece323e111c757d57d904e66f7b/src/main/scala/com/sksamuel/scapegoat/sbt/ScapegoatSbtPlugin.scala#L41) which you can use for inspiration.)
 
-    scapegoatCustomInspectionsClasspath := List(new File("lib/my-inpections-1.0.jar"))
+If your custom inspections come from a separate JAR, then your build will need to look more like this:
 
-If you would like to have the inspection classes in the same project, you can add them to the SBT `project/` build. Put your inspection classes under `project` (e.g. `project/src/main/scala/my/inspections/MyInspection.scala`) and use the following for the `scapegoatCustomInspectionsClasspath`:
+    object MyBuild extends Build {
+    
+      val scalaV = "2.11.6"
+    
+      lazy val project = Project("MyProject", file("."))
+        .settings(
+          scalaVersion := scalaV,    
+          // You must list here all the custom inspections by their fully-qualified class name:
+          scapegoatCustomInspections := List(
+            "my.inspections.InspectionOne",
+            "my.inspections.InspectionTwo"),
+          scapegoatCustomInspectionsClasspath := List(
+            "lib/my-inspections-1.0.0.jar")
+    }
 
+The `scapegoatCustomInspectionsClasspath` SBT SettingKey needs to list the classpath entries at which your inspection classes can be loaded. (There is not currently automatic support for using an Ivy-provided JAR dependency here. You may be able to do this by accessing the "update" SBT TaskKey. There is some code along these lines in [sbt-scapegoat](https://github.com/sksamuel/sbt-scapegoat/blob/ae4231d1341eeece323e111c757d57d904e66f7b/src/main/scala/com/sksamuel/scapegoat/sbt/ScapegoatSbtPlugin.scala#L41) which you can use for inspiration. However, this probably won't work as SBT Settings may not depend on SBT Tasks.)
 
-      scapegoatCustomInspectionsClasspath := List({
-        // Get the classpath dir of the SBT build to allow loading the inspections.
-        // There might be a better way to get this from SBT, but I can't find it.
-        // You can always hardcode "./project/target/scala-2.10/sbt-0.13/classes/" if you don't
-        // like this.
-        classOf[my.inspections.MyInspection].getClassLoader match {
-          case urlLoader: java.net.URLClassLoader => urlLoader.getURLs.toList match {
-            case List(u) if u.getProtocol == "file" =>
-              new File(u.toURI)
-          }
-        }
-      }),
+(Note that it is not currently possible to put the inspection classes inside the SBT `project/` build
+directory, as SBT uses Scala 2.10 and `scapegoat` works only with 2.11. You must create a separate project or JAR to hold the inspections.)
 
 #### False positives
 
