@@ -1,0 +1,5 @@
+# The project can be built and tested.
+# This includes unit tests for the custom inspections
+> test
+# The project has scapegoat warnings:
+-> scapegoat

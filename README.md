@@ -131,6 +131,8 @@ Your inspections need to be compiled before the code in the rest of your project
           scalaVersion := scalaV)
     }
 
+(There is a full worked example of a project with custom inspections in this repository
+at [src/sbt-test/scapegoat/custom-inspection-in-subproject](src/sbt-test/scapegoat/custom-inspection-in-subproject).)
 
 If your custom inspections come from a separate JAR, then your build will need to look more like this:
 

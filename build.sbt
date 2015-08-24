@@ -22,3 +22,10 @@ publishMavenStyle := false
 publishArtifact in Test := false
 
 parallelExecution in Test := false
+
+ScriptedPlugin.scriptedSettings
+
+scriptedLaunchOpts ++= Seq(
+  "-Xmx1024M", "-XX:MaxPermSize=256M",
+  "-Dplugin.version=" + version.value
+)
