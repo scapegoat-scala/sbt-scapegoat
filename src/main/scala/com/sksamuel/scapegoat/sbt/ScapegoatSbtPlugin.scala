@@ -1,6 +1,7 @@
 package com.sksamuel.scapegoat.sbt
 
 import sbt._
+import sbt.inc.Analysis
 import sbt.Keys._
 
 /** @author Stephen Samuel */
@@ -13,9 +14,12 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     val Scapegoat = config("scapegoat") extend Compile
 
     lazy val scapegoat = taskKey[Unit]("Run scapegoat quality checks")
+    lazy val scapegoatClean = taskKey[Unit]("Clean the scapegoat output directories")
+    lazy val scapegoatForceClean = taskKey[Unit]("Clean the scapegoat output directories")
     lazy val scapegoatVersion = settingKey[String]("The version of the scala plugin to use")
     lazy val scapegoatDisabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally")
     lazy val scapegoatEnabledInspections = settingKey[Seq[String]]("Inspections that are explicitly enabled")
+    lazy val scapegoatAlways = settingKey[Boolean]("Force inspections to run even on files that haven't changed")
     lazy val scapegoatIgnoredFiles = settingKey[Seq[String]]("File patterns to ignore")
     lazy val scapegoatMaxErrors = settingKey[Int]("Maximum number of errors before the build will fail")
     lazy val scapegoatMaxWarnings = settingKey[Int]("Maximum number of warnings before the build will fail")
@@ -27,6 +31,13 @@ object ScapegoatSbtPlugin extends AutoPlugin {
   }
 
   import autoImport._
+
+  def doScapegoatClean(force: Boolean, classesDir: File, log: Logger) {
+    if (force) {
+      log.info(s"[scapegoat] Removing scapegoat class directory: $classesDir")
+      IO.delete(Seq(classesDir))
+    }
+  }
 
   override def trigger = allRequirements
   override def projectSettings = {
@@ -75,9 +86,11 @@ object ScapegoatSbtPlugin extends AutoPlugin {
         }
       )
     } ++ Seq(
-      scapegoat := {
-        (compile in Scapegoat).value
-      },
+      (compile in Scapegoat) <<= (compile in Scapegoat) dependsOn scapegoatClean,
+      scapegoat := (compile in Scapegoat).value,
+      scapegoatClean := doScapegoatClean(scapegoatAlways.value, (classDirectory in Scapegoat).value, streams.value.log),
+      scapegoatForceClean := doScapegoatClean(true, (classDirectory in Scapegoat).value, streams.value.log),
+      scapegoatAlways   := true,
       scapegoatVersion := "1.0.0",
       scapegoatConsoleOutput := true,
       scapegoatVerbose := true,
