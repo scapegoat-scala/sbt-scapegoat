@@ -29,3 +29,31 @@ scriptedLaunchOpts ++= Seq(
   "-Xmx1024M", "-XX:MaxPermSize=256M",
   "-Dplugin.version=" + version.value
 )
+
+/**
+ * Before the "scripted" SBT tests are run, we "publishLocal" the example
+ * inspections, so that the "custom-inspection-in-external-project" test can
+ * depend on them via Ivy.
+ */
+val publishExampleInspections = sbt.TaskKey[Unit]("publishExampleInspections")
+
+publishExampleInspections := {
+  val sbt = if (System.getProperty("os.name").startsWith("Windows"))
+    List("cmd", "/c", "sbt")
+  else
+    List("sbt")
+
+  val cmd = sbt ++ List("-Dplugin.version=" + version.value, "publishLocal")
+
+  println("[info] Running: " + cmd.mkString(" "))
+
+  val ret = Process(
+    cmd,
+    new File("src/sbt-test/scapegoat/custom-inspection-in-subproject"))
+    .run()
+    .exitValue()
+
+  require(ret == 0)
+}
+
+scripted <<= scripted.dependsOn(publishExampleInspections)

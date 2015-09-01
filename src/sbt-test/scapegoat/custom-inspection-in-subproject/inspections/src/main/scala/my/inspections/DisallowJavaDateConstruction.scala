@@ -20,7 +20,7 @@ class DisallowJavaDateConstruction extends Inspection {
           context.warn(
             "Use of new java.util.Date() is disallowed",
             tree.pos,
-            Levels.Error,
+            Levels.Warning,
             "In this project, you may not directly construct a new Date(). Instead, please " +
               "use our hypothetical super test framework which lets you inject a mock time. " +
               "(Don't get too hung up on this inpsection; it's just an example!)",

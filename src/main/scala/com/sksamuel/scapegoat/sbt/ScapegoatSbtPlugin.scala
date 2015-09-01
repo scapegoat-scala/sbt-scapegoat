@@ -17,7 +17,10 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     lazy val scapegoatDisabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally, by simple name")
     lazy val scapegoatEnabledInspections = settingKey[Seq[String]]("Inspections that are explicitly enabled, by simple name")
     lazy val scapegoatCustomInspections = settingKey[Seq[String]]("Externally defined inspections to load, by full class name. Each class should implement com.sksamuel.scapegoat.Inspection.")
-    lazy val scapegoatCustomInspectionsClasspath = settingKey[Seq[File]]("Classpaths from which to load custom inspections.")
+    lazy val scapegoatCustomInspectionsDependencies = settingKey[Seq[sbt.ModuleID]]("Ivy dependencies containing custom inspections. " +
+      "These will be added to scapegoatCustomInspectionsClasspath.")
+    lazy val scapegoatCustomInspectionsClasspath = taskKey[Seq[File]]("Classpaths from which to load custom inspections. " +
+      "If you also use scapegoatCustomInspectionsDependencies, be sure to use '+=' not ':=' to set this.")
     lazy val scapegoatIgnoredFiles = settingKey[Seq[String]]("File patterns to ignore")
     lazy val scapegoatMaxErrors = settingKey[Int]("Maximum number of errors before the build will fail")
     lazy val scapegoatMaxWarnings = settingKey[Int]("Maximum number of warnings before the build will fail")
@@ -37,12 +40,15 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       Seq(
         sources := (sources in Compile).value,
         scalacOptions := {
-          // find all deps for the compile scope
-          val scapegoatDependencies = (update in Scapegoat).value matching configurationFilter(Compile.name)
-          // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
-          scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
-            case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies ($scapegoatDependencies)")
-            case Some(classpath) =>
+          // Ensure we have the scapegoat dependency on the classpath and
+          // add it as a scalac plugin:
+          val scapegoatDeps = (update in Scapegoat).value
+            .select(module = (m: ModuleID) =>
+              m.organization == GroupId && m.name.startsWith(ArtifactId))
+
+          scapegoatDeps match {
+            case Seq() => throw new Exception(s"Fatal: $GroupId.$ArtifactId not in libraryDependencies")
+            case Seq(classpath) =>
 
               val verbose = scapegoatVerbose.value
               val path = scapegoatOutputPath.value
@@ -102,13 +108,50 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       scapegoatDisabledInspections := Nil,
       scapegoatEnabledInspections := Nil,
       scapegoatCustomInspections := Nil,
-      scapegoatCustomInspectionsClasspath := Nil,
+      scapegoatCustomInspectionsDependencies := Nil,
+      scapegoatCustomInspectionsClasspath := {
+
+        // The default custom inspections classpath is the resolved artifact Files
+        // for all modules which were listed as "scapegoatCustomInspectionsDependencies"
+        val resolvedDeps = (update in Scapegoat).value
+        val crossVersioner = CrossVersion.apply(
+          (scalaVersion in Scapegoat).value, (scalaBinaryVersion in Scapegoat).value)
+
+        scapegoatCustomInspectionsDependencies.value.flatMap { modId =>
+
+          // The CI dep may have been cross-versioned by Ivy:
+          val expectedModId = crossVersioner(modId)
+          resolvedDeps
+            .select(module = (m: ModuleID) =>
+              // Compare the "toString"s of the ModuleID, otherwise config differences
+              // like the CrossVersion settings will fail the comparison:
+              m.toString() == expectedModId.toString())
+            .ensuring(
+              _.nonEmpty,
+              s"No resolved Ivy artifacts found for $expectedModId")
+        }
+      },
       scapegoatIgnoredFiles := Nil,
       scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
       scapegoatReports := Seq("all"),
-      libraryDependencies ++= Seq(
-        GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % (scapegoatVersion in Scapegoat).value % Compile.name
-      )
+      libraryDependencies ++= {
+        // All "scapegoatCustomInspectionsDependencies" and the plugin itself
+        // need to be added as "provided" (compile-time only) dependencies so that Ivy
+        // downloads the JARs and we have the classpath dir in the update report.
+        // This is then used by 'scapegoatCustomInspectionsClasspath' above.
+        val customDeps = scapegoatCustomInspectionsDependencies.value.map(_ % Provided.name)
+
+        // Add the plugin itself as a library dependency of the project, so
+        // that the support classes (Inspection etc.) are available at compile
+        // time.
+        // FIXME: "Compile" seems like the wrong scope here, as it implies a
+        // runtime dependency (despite the name). These deps are compile-only,
+        // so the correct scope ought to be "Provided", I think.
+        // However, that doesn't actually work.
+        val pluginDep = GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % (scapegoatVersion in Scapegoat).value % Compile.name
+
+        customDeps :+ pluginDep
+      }
     )
   }
 }

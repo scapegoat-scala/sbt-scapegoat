@@ -1,5 +1,7 @@
 # The project can be built and tested.
 # This includes unit tests for the custom inspections
 > test
+# Scapegoat should run OK:
+> scapegoat
 # The project has scapegoat warnings:
--> scapegoat
+$ exec grep DisallowJavaDateConstruction target/scala-2.11/scapegoat-report/scapegoat-scalastyle.xml

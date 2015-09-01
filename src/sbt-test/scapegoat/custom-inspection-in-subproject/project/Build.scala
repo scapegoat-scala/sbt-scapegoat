@@ -2,16 +2,17 @@ import com.sksamuel.scapegoat.sbt.ScapegoatSbtPlugin.autoImport._
 import sbt.Keys._
 import sbt._
 
-object ScapegoatCustomInspectionsExample extends Build {
+object CustomInspectionInSubproject extends Build {
 
   val scalaV = "2.11.6"
 
-  lazy val project = Project("ScapegoatCustomInspectionsExample", file("."))
+  lazy val project = Project("CustomInspectionInSubproject", file("."))
     // "aggregate" causes these child projects to be built and tested whenever
     // the parent project is built and tested.
     .aggregate(inspections)
     .settings(
       scalaVersion := scalaV,
+      publishLocal := {},
 
       // FIXME: Having to list the classes here is error-prone.
       // There are two main cases:
@@ -23,8 +24,8 @@ object ScapegoatCustomInspectionsExample extends Build {
       scapegoatCustomInspections := List(
         "my.inspections.DisallowJavaDateConstruction"),
 
-      scapegoatCustomInspectionsClasspath := List(
-        (classDirectory in inspections in Scapegoat).value))
+      scapegoatCustomInspectionsClasspath +=
+        (classDirectory in inspections in Scapegoat).value)
 
     // FIXME: this dependency ought to be in scope 'provided', as it is
     // compile only, so is not needed at runtime.
@@ -39,6 +40,8 @@ object ScapegoatCustomInspectionsExample extends Build {
 
   lazy val inspections = Project("inspections", file("inspections"))
     .settings(
+      organization  := "com.sksamuel.scapegoat.examples",
+      version := "1.0.0",
       libraryDependencies ++= List(
         "com.sksamuel.scapegoat" %% "scalac-scapegoat-plugin" % "1.1.0",
         "org.scala-lang"         %  "scala-compiler"          % scalaV,

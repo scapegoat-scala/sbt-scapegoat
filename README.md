@@ -103,7 +103,9 @@ project-specific rule.
 
 How to write and test the inspection class is described in [the scalac-scapegoat-plugin CustomInspections readme](https://github.com/sksamuel/scalac-scapegoat-plugin/blob/master/CustomInspections.md)
 
-Your inspections need to be compiled before the code in the rest of your project is compiled (like macros). You can achieve this with a project set up like the following:
+Your inspections need to be compiled before the code in the rest of your project is compiled (like macros).
+If your inspections are in the same project as the code, you can achieve this
+with a project set up like the following:
 
     object MyBuild extends Build {
     
@@ -119,8 +121,8 @@ Your inspections need to be compiled before the code in the rest of your project
           scapegoatCustomInspections := List(
             "my.inspections.InspectionOne",
             "my.inspections.InspectionTwo"),
-          scapegoatCustomInspectionsClasspath := List(
-            (classDirectory in inspections in Scapegoat).value))
+          scapegoatCustomInspectionsClasspath +=
+            (classDirectory in inspections in Scapegoat).value)
         .dependsOn(inspections)
     
       lazy val inspections = Project("inspections", file("inspections"))
@@ -134,7 +136,8 @@ Your inspections need to be compiled before the code in the rest of your project
 (There is a full worked example of a project with custom inspections in this repository
 at [src/sbt-test/scapegoat/custom-inspection-in-subproject](src/sbt-test/scapegoat/custom-inspection-in-subproject).)
 
-If your custom inspections come from a separate JAR, then your build will need to look more like this:
+If your custom inspections come from a separate JAR, then your build will need
+to look like this:
 
     object MyBuild extends Build {
     
@@ -147,11 +150,12 @@ If your custom inspections come from a separate JAR, then your build will need t
           scapegoatCustomInspections := List(
             "my.inspections.InspectionOne",
             "my.inspections.InspectionTwo"),
-          scapegoatCustomInspectionsClasspath := List(
-            "lib/my-inspections-1.0.0.jar")
+          scapegoatCustomInspectionsDependencies +=
+            "my.inspections" %% "inspections" % "1.0.0")
     }
 
-The `scapegoatCustomInspectionsClasspath` SBT SettingKey needs to list the classpath entries at which your inspection classes can be loaded. (There is not currently automatic support for using an Ivy-provided JAR dependency here. You may be able to do this by accessing the "update" SBT TaskKey. There is some code along these lines in [sbt-scapegoat](https://github.com/sksamuel/sbt-scapegoat/blob/ae4231d1341eeece323e111c757d57d904e66f7b/src/main/scala/com/sksamuel/scapegoat/sbt/ScapegoatSbtPlugin.scala#L41) which you can use for inspiration. However, this probably won't work as SBT Settings may not depend on SBT Tasks.)
+(There is a full worked example of a project with custom inspections from a JAR in this repository
+at [src/sbt-test/scapegoat/custom-inspection-in-external-project](src/sbt-test/scapegoat/custom-inspection-in-external-project).)
 
 (Note that it is not currently possible to put the inspection classes inside the SBT `project/` build
 directory, as SBT uses Scala 2.10 and `scapegoat` works only with 2.11. You must create a separate project or JAR to hold the inspections.)

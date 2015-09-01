@@ -1,0 +1,10 @@
+# This example project depends on the sibling example
+# 'custom-inspection-in-subproject'.
+# The inspections from that demo have been "publishLocal"ed by the build.sbt
+# in the top-level project.
+# The project can be built and tested:
+> test
+# Scapegoat should run OK:
+> scapegoat
+# The project has scapegoat warnings:
+$ exec grep DisallowJavaDateConstruction target/scala-2.11/scapegoat-report/scapegoat-scalastyle.xml
