@@ -76,7 +76,6 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       )
     } ++ Seq(
       scapegoat := {
-        clean.value
         (compile in Scapegoat).value
       },
       scapegoatVersion := "1.0.0",
