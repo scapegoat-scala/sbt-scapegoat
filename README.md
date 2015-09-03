@@ -32,7 +32,7 @@ task:
 [info] [scapegoat]: Written XML report [/home/sam/development/workspace/elastic4s/target/scala-2.11/scapegoat-report/scapegoat.xml]
 ```
 
-You should find the reports inside `target/scala-2.11/scapegoat-report`. By default, the reports will be regenerated for all files on every invocation of the `scapegoat` task. If you'd prefer to only have reports generated for files that have changed between invocations, you can set the `scapegoatAlways` setting to false. You can then manually force a full inspection by invoking the `scapegoatForceClean` task, or by doing a full `clean`.
+You should find the reports inside `target/scala-2.11/scapegoat-report`. By default, the reports will be regenerated for all files on every invocation of the `scapegoat` task. If you'd prefer to only have reports generated for files that have changed between invocations, you can set the `scapegoatRunAlways` setting to false. You can then manually force a full inspection by invoking the `scapegoatClean` task, or by doing a full `clean`.
 
 #### Inspections list
 
