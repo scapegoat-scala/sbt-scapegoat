@@ -1,0 +1,7 @@
+# This example project checks that `scapegoat` can find some errors.
+# The project can be built and tested:
+> test
+# Scapegoat should run OK:
+> scapegoat
+# The project has scapegoat warnings:
+$ exec grep ArraysToString target/scala-2.11/scapegoat-report/scapegoat-scalastyle.xml
