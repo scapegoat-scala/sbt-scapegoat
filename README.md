@@ -96,6 +96,16 @@ class Test2 {
 } 
 ```
 
+#### Inspection warning level overrides
+
+If you want to change the warning level of an inspection, for example to downgrade "TraversableHead" and "OptionGet" from Errors to Warnings, add the following to your build.sbt:
+
+```scala
+scalacOptions += "-P:scapegoat:overrideLevels:TraversableHead=Warning:OptionGet=Warning",
+```
+
+The string should be a colon separated list of name=level settings, where 'name' is the simple name of an inspection and 'level' is the simple name of a com.sksamuel.scapegoat.Level constant, e.g. 'Warning'.
+
 #### False positives
 
 Please note that scapegoat is a new project. While it's been tested on some common open source projects, there is still a good chance you'll find false positives. Please open up issues if you run into these so we can fix them.
