@@ -14,7 +14,13 @@ sbt-scapegoat is an [auto plugin](https://typesafe.com/blog/preview-of-upcoming-
 Add the plugin to your build with the following in project/plugins.sbt:
 
 ```scala
-addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.0")
+addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.1.0")
+```
+
+Then in your build sbt, set the version of scapegoat you wish to use eg:
+
+```scala
+scapegoatVersion := "1.1.0"
 ```
 
 That's it! You can now generate the scapegoat reports using the `scapegoat`
@@ -33,6 +39,7 @@ task:
 ```
 
 You should find the reports inside `target/scala-2.11/scapegoat-report`. By default, the reports will be regenerated for all files on every invocation of the `scapegoat` task. If you'd prefer to only have reports generated for files that have changed between invocations, you can set the `scapegoatRunAlways` setting to false. You can then manually force a full inspection by invoking the `scapegoatClean` task, or by doing a full `clean`.
+
 
 #### Inspections list
 
