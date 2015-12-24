@@ -22,3 +22,7 @@ publishMavenStyle := false
 publishArtifact in Test := false
 
 parallelExecution in Test := false
+
+sbtrelease.ReleasePlugin.autoImport.releasePublishArtifactsAction := PgpKeys.publishSigned.value
+
+sbtrelease.ReleasePlugin.autoImport.releaseCrossBuild := false
