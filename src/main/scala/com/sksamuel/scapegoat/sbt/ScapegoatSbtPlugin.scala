@@ -1,10 +1,8 @@
 package com.sksamuel.scapegoat.sbt
 
 import sbt._
-import sbt.inc.Analysis
 import sbt.Keys._
 
-/** @author Stephen Samuel */
 object ScapegoatSbtPlugin extends AutoPlugin {
 
   val GroupId = "com.sksamuel.scapegoat"
