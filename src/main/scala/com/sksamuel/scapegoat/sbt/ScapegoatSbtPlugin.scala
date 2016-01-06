@@ -43,6 +43,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       Defaults.compileSettings ++
       Seq(
         sources := (sources in Compile).value,
+        managedClasspath := (managedClasspath in Compile).value,
+        unmanagedClasspath := (unmanagedClasspath in Compile).value,
         scalacOptions := {
           // find all deps for the compile scope
           val scapegoatDependencies = (update in Scapegoat).value matching configurationFilter(Compile.name)
