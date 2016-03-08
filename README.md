@@ -1,9 +1,9 @@
 sbt-scapegoat
 =============
 
-sbt-scapegoat is a plugin for SBT that integrates the scapegoat [static code analysis library](http://en.wikipedia.org/wiki/Static_program_analysis). Find out more about scapegoat at the [scapegoat project page](https://github.com/sksamuel/scapegoat).
-
 [<img src="https://img.shields.io/maven-central/v/com.sksamuel.scapegoat/sbt-scapegoat.svg?label=latest%20release"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22sbt-scapegoat%22)
+
+sbt-scapegoat is a plugin for SBT that integrates the scapegoat [static code analysis library](http://en.wikipedia.org/wiki/Static_program_analysis). Find out more about scapegoat at the [scapegoat project page](https://github.com/sksamuel/scapegoat).
 
 #### How to use
 
