@@ -38,6 +38,21 @@ object ScapegoatSbtPlugin extends AutoPlugin {
   }
 
   override def trigger = allRequirements
+
+  override def buildSettings = super.buildSettings ++ Seq(
+    scapegoatVersion := "1.0.0",
+    scapegoatRunAlways   := true,
+    scapegoatConsoleOutput := true,
+    scapegoatVerbose := true,
+    scapegoatMaxInfos := -1,
+    scapegoatMaxWarnings := -1,
+    scapegoatMaxErrors := -1,
+    scapegoatDisabledInspections := Nil,
+    scapegoatEnabledInspections := Nil,
+    scapegoatIgnoredFiles := Nil,
+    scapegoatReports := Seq("all")
+  )
+
   override def projectSettings = {
     inConfig(Scapegoat) {
       Defaults.compileSettings ++
@@ -88,22 +103,12 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     } ++ Seq(
       (compile in Scapegoat) <<= (compile in Scapegoat) dependsOn scapegoatClean,
       scapegoat := (compile in Scapegoat).value,
-      scapegoatCleanTask := doScapegoatClean(scapegoatRunAlways.value, (classDirectory in Scapegoat).value, streams.value.log),
+      scapegoatCleanTask := doScapegoatClean((scapegoatRunAlways in ThisBuild).value, (classDirectory in Scapegoat).value, streams.value.log),
       scapegoatClean := doScapegoatClean(true, (classDirectory in Scapegoat).value, streams.value.log),
-      scapegoatRunAlways   := true,
-      scapegoatVersion := "1.0.0",
-      scapegoatConsoleOutput := true,
-      scapegoatVerbose := true,
-      scapegoatMaxInfos := -1,
-      scapegoatMaxWarnings := -1,
-      scapegoatMaxErrors := -1,
-      scapegoatDisabledInspections := Nil,
-      scapegoatEnabledInspections := Nil,
-      scapegoatIgnoredFiles := Nil,
+      // FIXME Cannot seem to make this a build setting (compile:crossTarget is an undefined setting)
       scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
-      scapegoatReports := Seq("all"),
       libraryDependencies ++= Seq(
-        GroupId % (ArtifactId + "_" + scalaBinaryVersion.value) % (scapegoatVersion in Scapegoat).value % Compile.name
+        GroupId % (ArtifactId + "_" + (scalaBinaryVersion in ThisBuild).value) % (scapegoatVersion in ThisBuild).value % Compile.name
       )
     )
   }
