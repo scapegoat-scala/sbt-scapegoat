@@ -4,19 +4,22 @@ organization := "com.sksamuel.scapegoat"
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf8")
 
-javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
-scalaVersion := "2.10.5"
+scalaVersion := "2.12.3"
 
 sbtPlugin := true
 
-publishTo <<= version {
-  (v: String) =>
+val isDirty = SettingKey[Boolean]("is-dirty", "Whether the repo is dirty or not, i.e. does it have uncommitted changes?")
+
+isDirty := version.value.trim.endsWith("SNAPSHOT")
+
+publishTo := {
+    val isSnapshotValue = isSnapshot.value
     val nexus = "https://oss.sonatype.org/"
-    if (v.trim.endsWith("SNAPSHOT"))
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases" at nexus + "service/local/staging/deploy/maven2")
+    if (isDirty.value) None
+    else if(isSnapshotValue) Some("snapshots" at nexus + "content/repositories/snapshots")
+    else Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
 publishMavenStyle := true

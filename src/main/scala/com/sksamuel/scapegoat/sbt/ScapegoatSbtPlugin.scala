@@ -41,7 +41,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   override def buildSettings = super.buildSettings ++ Seq(
     scapegoatVersion := "1.0.0",
-    scapegoatRunAlways   := true,
+    scapegoatRunAlways := true,
     scapegoatConsoleOutput := true,
     scapegoatVerbose := true,
     scapegoatMaxInfos := -1,
@@ -50,66 +50,62 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     scapegoatDisabledInspections := Nil,
     scapegoatEnabledInspections := Nil,
     scapegoatIgnoredFiles := Nil,
-    scapegoatReports := Seq("all")
-  )
+    scapegoatReports := Seq("all"))
 
   override def projectSettings = {
     inConfig(Scapegoat) {
       Defaults.compileSettings ++
-      Seq(
-        sources := (sources in Compile).value,
-        managedClasspath := (managedClasspath in Compile).value,
-        unmanagedClasspath := (unmanagedClasspath in Compile).value,
-        scalacOptions := {
-          // find all deps for the compile scope
-          val scapegoatDependencies = (update in Scapegoat).value matching configurationFilter(Compile.name)
-          // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
-          scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
-            case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies ($scapegoatDependencies)")
-            case Some(classpath) =>
+        Seq(
+          sources := (sources in Compile).value,
+          managedClasspath := (managedClasspath in Compile).value,
+          unmanagedClasspath := (unmanagedClasspath in Compile).value,
+          scalacOptions := {
+            // find all deps for the compile scope
+            val scapegoatDependencies = (update in Scapegoat).value matching configurationFilter(Compile.name)
+            // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
+            scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
+              case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies ($scapegoatDependencies)")
+              case Some(classpath) =>
 
-              val verbose = scapegoatVerbose.value
-              val path = scapegoatOutputPath.value
-              val reports = scapegoatReports.value
+                val verbose = scapegoatVerbose.value
+                val path = scapegoatOutputPath.value
+                val reports = scapegoatReports.value
+                val streamsValue = streams.value
 
-              if (verbose)
-                streams.value.log.info(s"[scapegoat] setting output dir to [$path]")
+                if (verbose)
+                  streamsValue.log.info(s"[scapegoat] setting output dir to [$path]")
 
-              val disabled = scapegoatDisabledInspections.value.filterNot(_.trim.isEmpty)
-              if (disabled.nonEmpty && verbose)
-                streams.value.log.info("[scapegoat] disabled inspections: " + disabled.mkString(","))
+                val disabled = scapegoatDisabledInspections.value.filterNot(_.trim.isEmpty)
+                if (disabled.nonEmpty && verbose)
+                  streamsValue.log.info("[scapegoat] disabled inspections: " + disabled.mkString(","))
 
-              val enabled = scapegoatEnabledInspections.value.filterNot(_.trim.isEmpty)
-              if (enabled.nonEmpty && verbose)
-                streams.value.log.info("[scapegoat] enabled inspections: " + enabled.mkString(","))
+                val enabled = scapegoatEnabledInspections.value.filterNot(_.trim.isEmpty)
+                if (enabled.nonEmpty && verbose)
+                  streamsValue.log.info("[scapegoat] enabled inspections: " + enabled.mkString(","))
 
-              val ignoredFilePatterns = scapegoatIgnoredFiles.value.filterNot(_.trim.isEmpty)
-              if (ignoredFilePatterns.nonEmpty && verbose)
-                streams.value.log.info("[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
+                val ignoredFilePatterns = scapegoatIgnoredFiles.value.filterNot(_.trim.isEmpty)
+                if (ignoredFilePatterns.nonEmpty && verbose)
+                  streamsValue.log.info("[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
 
-              (scalacOptions in Compile).value ++ Seq(
-                Some("-Xplugin:" + classpath.getAbsolutePath),
-                Some("-P:scapegoat:verbose:" + scapegoatVerbose.value),
-                Some("-P:scapegoat:consoleOutput:" + scapegoatConsoleOutput.value),
-                Some("-P:scapegoat:dataDir:" + path),
-                if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
-                if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
-                if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")),
-                if (reports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":"))
-              ).flatten
-          }
-        }
-      )
+                (scalacOptions in Compile).value ++ Seq(
+                  Some("-Xplugin:" + classpath.getAbsolutePath),
+                  Some("-P:scapegoat:verbose:" + scapegoatVerbose.value),
+                  Some("-P:scapegoat:consoleOutput:" + scapegoatConsoleOutput.value),
+                  Some("-P:scapegoat:dataDir:" + path),
+                  if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
+                  if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
+                  if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")),
+                  if (reports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":"))).flatten
+            }
+          })
     } ++ Seq(
-      (compile in Scapegoat) <<= (compile in Scapegoat) dependsOn scapegoatClean,
+      (compile in Scapegoat) := ((compile in Scapegoat) dependsOn scapegoatClean).value,
       scapegoat := (compile in Scapegoat).value,
       scapegoatCleanTask := doScapegoatClean((scapegoatRunAlways in ThisBuild).value, (classDirectory in Scapegoat).value, streams.value.log),
       scapegoatClean := doScapegoatClean(true, (classDirectory in Scapegoat).value, streams.value.log),
       // FIXME Cannot seem to make this a build setting (compile:crossTarget is an undefined setting)
       scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
       libraryDependencies ++= Seq(
-        GroupId % (ArtifactId + "_" + (scalaBinaryVersion in ThisBuild).value) % (scapegoatVersion in ThisBuild).value % Compile.name
-      )
-    )
+        GroupId % (ArtifactId + "_" + (scalaBinaryVersion in ThisBuild).value) % (scapegoatVersion in ThisBuild).value % Compile.name))
   }
 }
