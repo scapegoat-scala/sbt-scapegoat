@@ -10,15 +10,10 @@ scalaVersion := "2.12.3"
 
 sbtPlugin := true
 
-val isDirty = SettingKey[Boolean]("is-dirty", "Whether the repo is dirty or not, i.e. does it have uncommitted changes?")
-
-isDirty := version.value.trim.endsWith("SNAPSHOT")
-
 publishTo := {
     val isSnapshotValue = isSnapshot.value
     val nexus = "https://oss.sonatype.org/"
-    if (isDirty.value) None
-    else if(isSnapshotValue) Some("snapshots" at nexus + "content/repositories/snapshots")
+    if(isSnapshotValue) Some("snapshots" at nexus + "content/repositories/snapshots")
     else Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
