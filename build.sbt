@@ -27,6 +27,10 @@ sbtrelease.ReleasePlugin.autoImport.releasePublishArtifactsAction := PgpKeys.pub
 
 sbtrelease.ReleasePlugin.autoImport.releaseCrossBuild := false
 
+pgpSecretRing := file("/home/sam/Downloads/gpg.private")
+
+pgpPublicRing := file("/home/sam/Downloads/gpg.public")
+
 pomIncludeRepository := {
   _ => false
 }
