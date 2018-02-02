@@ -104,7 +104,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       scapegoatCleanTask := doScapegoatClean((scapegoatRunAlways in ThisBuild).value, (classDirectory in Scapegoat).value, streams.value.log),
       scapegoatClean := doScapegoatClean(true, (classDirectory in Scapegoat).value, streams.value.log),
       // FIXME Cannot seem to make this a build setting (compile:crossTarget is an undefined setting)
-      scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
-      libraryDependencies ++= Seq(GroupId %% ArtifactId % (scapegoatVersion in ThisBuild).value % Provided))
+      scapegoatOutputPath := (crossTarget in Provided).value.getAbsolutePath + "/scapegoat-report",
+      libraryDependencies += GroupId %% ArtifactId % (scapegoatVersion in ThisBuild).value % Provided)
   }
 }
