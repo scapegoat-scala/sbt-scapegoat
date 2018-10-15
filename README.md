@@ -1,7 +1,7 @@
 sbt-scapegoat
 =============
 
-[<img src="https://img.shields.io/badge/Latest%20Release-1.0.7-yellowgreen.svg"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22sbt-scapegoat%22)
+[<img src="https://img.shields.io/badge/Latest%20Release-1.0.9-yellowgreen.svg"/>](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22sbt-scapegoat%22)
 
 sbt-scapegoat is a plugin for SBT that integrates the scapegoat [static code analysis library](http://en.wikipedia.org/wiki/Static_program_analysis). Find out more about scapegoat at the [scapegoat project page](https://github.com/sksamuel/scapegoat).
 
@@ -16,7 +16,7 @@ sbt-scapegoat is an [auto plugin](https://typesafe.com/blog/preview-of-upcoming-
 Add the plugin to your build with the following in project/plugins.sbt:
 
 ```scala
-addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.4")
+addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.9")
 ```
 
 Then in your build sbt, set the version of scapegoat you wish to use eg:
