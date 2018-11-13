@@ -26,6 +26,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     lazy val scapegoatOutputPath = settingKey[String]("Directory where reports will be written")
     lazy val scapegoatVerbose = settingKey[Boolean]("Verbose mode for inspections")
     lazy val scapegoatReports = settingKey[Seq[String]]("The report styles to generate")
+    lazy val scapegoatSourcePrefix = settingKey[String]("Package root directory, for ex. 'app' for Play applications")
   }
 
   import autoImport._
@@ -50,7 +51,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     scapegoatDisabledInspections := Nil,
     scapegoatEnabledInspections := Nil,
     scapegoatIgnoredFiles := Nil,
-    scapegoatReports := Seq("all"))
+    scapegoatReports := Seq("all"),
+    scapegoatSourcePrefix := "src/main/scala")
 
   override def projectSettings = {
     inConfig(Scapegoat) {
@@ -87,6 +89,10 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                 if (ignoredFilePatterns.nonEmpty && verbose)
                   streamsValue.log.info("[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
 
+                val customSourcePrefix = scapegoatSourcePrefix.value
+                if (customSourcePrefix.nonEmpty)
+                  streamsValue.log.info("[scapegoat] source prefix: " + customSourcePrefix)
+
                 (scalacOptions in Compile).value ++ Seq(
                   Some("-Xplugin:" + classpath.getAbsolutePath),
                   Some("-P:scapegoat:verbose:" + scapegoatVerbose.value),
@@ -95,7 +101,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                   if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
                   if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
                   if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")),
-                  if (reports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":"))).flatten
+                  if (reports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":")),
+                  if (customSourcePrefix.isEmpty) None else Some("-P:scapegoat:sourcePrefix:" + customSourcePrefix)).flatten
             }
           })
     } ++ Seq(
