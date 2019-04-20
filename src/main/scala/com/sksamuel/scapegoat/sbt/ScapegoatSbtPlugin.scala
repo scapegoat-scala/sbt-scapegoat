@@ -16,7 +16,6 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     lazy val scapegoatClean = taskKey[Unit]("Clean the scapegoat output directories")
     lazy val scapegoatVersion = settingKey[String]("The version of the scala plugin to use")
     lazy val scapegoatDisabledInspections = settingKey[Seq[String]]("Inspections that are disabled globally")
-    lazy val scapegoatEnabledInspections = settingKey[Seq[String]]("Inspections that are explicitly enabled")
     lazy val scapegoatRunAlways = settingKey[Boolean]("Force inspections to run even on files that haven't changed")
     lazy val scapegoatIgnoredFiles = settingKey[Seq[String]]("File patterns to ignore")
     lazy val scapegoatMaxErrors = settingKey[Int]("Maximum number of errors before the build will fail")
@@ -49,7 +48,6 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     scapegoatMaxWarnings := -1,
     scapegoatMaxErrors := -1,
     scapegoatDisabledInspections := Nil,
-    scapegoatEnabledInspections := Nil,
     scapegoatIgnoredFiles := Nil,
     scapegoatReports := Seq("all"),
     scapegoatSourcePrefix := "src/main/scala")
@@ -81,10 +79,6 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                 if (disabled.nonEmpty && verbose)
                   streamsValue.log.info("[scapegoat] disabled inspections: " + disabled.mkString(","))
 
-                val enabled = scapegoatEnabledInspections.value.filterNot(_.trim.isEmpty)
-                if (enabled.nonEmpty && verbose)
-                  streamsValue.log.info("[scapegoat] enabled inspections: " + enabled.mkString(","))
-
                 val ignoredFilePatterns = scapegoatIgnoredFiles.value.filterNot(_.trim.isEmpty)
                 if (ignoredFilePatterns.nonEmpty && verbose)
                   streamsValue.log.info("[scapegoat] ignored file patterns: " + ignoredFilePatterns.mkString(","))
@@ -99,7 +93,6 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                   Some("-P:scapegoat:consoleOutput:" + scapegoatConsoleOutput.value),
                   Some("-P:scapegoat:dataDir:" + path),
                   if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
-                  if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
                   if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")),
                   if (reports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":")),
                   if (customSourcePrefix.isEmpty) None else Some("-P:scapegoat:sourcePrefix:" + customSourcePrefix)).flatten
