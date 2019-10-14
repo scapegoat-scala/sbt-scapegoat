@@ -26,6 +26,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     lazy val scapegoatVerbose = settingKey[Boolean]("Verbose mode for inspections")
     lazy val scapegoatReports = settingKey[Seq[String]]("The report styles to generate")
     lazy val scapegoatSourcePrefix = settingKey[String]("Package root directory, for ex. 'app' for Play applications")
+    lazy val scapegoatMinimalWarnLevel = settingKey[String]("minimal level of inspection to be displayed in reports.")
   }
 
   import autoImport._
@@ -50,7 +51,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     scapegoatDisabledInspections := Nil,
     scapegoatIgnoredFiles := Nil,
     scapegoatReports := Seq("all"),
-    scapegoatSourcePrefix := "src/main/scala")
+    scapegoatSourcePrefix := "src/main/scala",
+    scapegoatMinimalWarnLevel := "info")
 
   override def projectSettings = {
     inConfig(Scapegoat) {
@@ -87,6 +89,10 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                 if (customSourcePrefix.nonEmpty)
                   streamsValue.log.info("[scapegoat] source prefix: " + customSourcePrefix)
 
+                val customMinimalWarnLevel = scapegoatMinimalWarnLevel.value
+                if (customMinimalWarnLevel.nonEmpty)
+                  streamsValue.log.info("[scapegoat] minimal warn level: " + customMinimalWarnLevel)
+
                 (scalacOptions in Compile).value ++ Seq(
                   Some("-Xplugin:" + classpath.getAbsolutePath),
                   Some("-P:scapegoat:verbose:" + scapegoatVerbose.value),
@@ -95,7 +101,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                   if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
                   if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")),
                   if (reports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":")),
-                  if (customSourcePrefix.isEmpty) None else Some("-P:scapegoat:sourcePrefix:" + customSourcePrefix)).flatten
+                  if (customSourcePrefix.isEmpty) None else Some(s"-P:scapegoat:sourcePrefix:$customSourcePrefix"),
+                  if (customMinimalWarnLevel.isEmpty) None else Some(s"-P:scapegoat:minimalWarnLevel:$scapegoatMinimalWarnLevel")).flatten
             }
           })
     } ++ Seq(
