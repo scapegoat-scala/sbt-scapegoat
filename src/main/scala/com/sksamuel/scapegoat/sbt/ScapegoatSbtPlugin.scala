@@ -112,6 +112,16 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       scapegoatClean := doScapegoatClean(true, (classDirectory in Scapegoat).value, streams.value.log),
       // FIXME Cannot seem to make this a build setting (compile:crossTarget is an undefined setting)
       scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
-      libraryDependencies ++= Seq(GroupId %% ArtifactId % (scapegoatVersion in ThisBuild).value % Provided))
+      libraryDependencies ++= Seq(crossVersion(GroupId %% ArtifactId % (scapegoatVersion in ThisBuild).value % Provided)))
+  }
+
+  private def crossVersion(mod: ModuleID) = {
+    val components = mod.revision.split('.').take(2).map { c => try { c.toInt } catch { case e: Exception => 0 } }
+
+    components match {
+      // versions >= 1.4.0 use the full cross version
+      case Array(major, minor) if major > 1 || minor >= 4 => mod cross CrossVersion.full
+      case _ => mod
+    }
   }
 }
