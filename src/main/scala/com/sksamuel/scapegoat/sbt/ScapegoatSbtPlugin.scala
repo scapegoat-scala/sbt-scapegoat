@@ -106,7 +106,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
             }
           })
     } ++ Seq(
-      ivyConfigurations += Configuration.of("Scapegoat", "scapegoat").hide,
+      ivyConfigurations += Scapegoat,
       (compile in Scapegoat) := ((compile in Scapegoat) dependsOn scapegoatClean).value,
       scapegoat := (compile in Scapegoat).value,
       scapegoatCleanTask := doScapegoatClean((scapegoatRunAlways in ThisBuild).value, (classDirectory in Scapegoat).value, streams.value.log),
