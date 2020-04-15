@@ -15,10 +15,8 @@ sbtPlugin := true
 crossSbtVersions := Seq("0.13.17", "1.1.6")
 
 publishTo := {
-    val isSnapshotValue = isSnapshot.value
-    val nexus = "https://oss.sonatype.org/"
-    if(isSnapshotValue) Some("snapshots" at nexus + "content/repositories/snapshots")
-    else Some("releases" at nexus + "service/local/staging/deploy/maven2")
+  if (isSnapshot.value) Some(Resolver.sonatypeRepo("snapshots"))
+  else Some(Resolver.sonatypeRepo("releases"))
 }
 
 publishMavenStyle := true
