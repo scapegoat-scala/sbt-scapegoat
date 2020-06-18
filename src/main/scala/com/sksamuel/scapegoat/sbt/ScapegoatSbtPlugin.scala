@@ -102,7 +102,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                   if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")),
                   if (reports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":")),
                   if (customSourcePrefix.isEmpty) None else Some(s"-P:scapegoat:sourcePrefix:$customSourcePrefix"),
-                  if (customMinimalWarnLevel.isEmpty) None else Some(s"-P:scapegoat:minimalWarnLevel:$scapegoatMinimalWarnLevel")).flatten
+                  if (customMinimalWarnLevel.isEmpty) None else Some(s"-P:scapegoat:minimalWarnLevel:$customMinimalWarnLevel")).flatten
             }
           })
     } ++ Seq(
