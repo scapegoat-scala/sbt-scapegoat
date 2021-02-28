@@ -9,7 +9,7 @@ sbt-scapegoat is a plugin for SBT that integrates the scapegoat [static code ana
 
 sbt-scapegoat is an [auto plugin](https://typesafe.com/blog/preview-of-upcoming-sbt-10-features-read-about-the-new-plugins). This means you need SBT 0.13.5 or higher. If you are using an earlier 0.13.x build, you should be able to upgrade to 0.13.5 without any issues.
 
-*Please note*: [scapegoat](https://github.com/sksamuel/scapegoat) only works with Scala 2.11.x and 2.12.x. There are no plans to release a 2.10.x branch.
+*Please note*: [scapegoat](https://github.com/sksamuel/scapegoat) only works with Scala 2.11.x, 2.12.x, 2.13.x. There are no plans to release a 2.10.x branch.
 
 *Another note* [scapegoat] Plugin has been migrated to support scala version 2.12.3 and sbt version 1.0.1
 
