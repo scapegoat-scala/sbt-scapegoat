@@ -8,7 +8,7 @@ scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
-scalaVersion := "2.12.13"
+scalaVersion := "2.13.5"
 
 sbtPlugin := true
 
