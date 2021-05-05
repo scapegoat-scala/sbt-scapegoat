@@ -22,7 +22,7 @@ addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.1.0")
 Then in your build sbt, set the version of scapegoat you wish to use eg:
 
 ```scala
-scapegoatVersion in ThisBuild := "1.3.8"
+scapegoatVersion in ThisBuild := "1.4.8"
 ```
 
 That's it! You can now generate the scapegoat reports using the `scapegoat`
