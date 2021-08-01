@@ -28,6 +28,10 @@ parallelExecution in Test := false
 sbtrelease.ReleasePlugin.autoImport.releasePublishArtifactsAction := PgpKeys.publishSigned.value
 sbtrelease.ReleasePlugin.autoImport.releaseCrossBuild := true
 
+val localCreds = Credentials(Path.userHome / ".sbt" / "credentials.sbt")
+
+credentials := Seq(localCreds)
+
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
