@@ -12,25 +12,28 @@ scalaVersion := "2.13.6"
 
 sbtPlugin := true
 
-crossSbtVersions := Seq("0.13.17", "1.1.6")
-
-publishTo := {
-  if (isSnapshot.value) Some(Resolver.sonatypeRepo("snapshots"))
-  else Some(Resolver.sonatypeRepo("releases"))
-}
+crossSbtVersions := Seq("0.13.17", "1.5.5")
 
 publishMavenStyle := true
 
 publishArtifact in Test := false
 
-parallelExecution in Test := false
+pomIncludeRepository := Function.const(false)
 
-sbtrelease.ReleasePlugin.autoImport.releasePublishArtifactsAction := PgpKeys.publishSigned.value
-sbtrelease.ReleasePlugin.autoImport.releaseCrossBuild := true
+releaseCrossBuild := true
+
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
+
+publishTo := {
+  val nexus = "https://s01.oss.sonatype.org/"
+  Some("releases" at nexus + "service/local/staging/deploy/maven2")
+}
 
 val localCreds = Credentials(Path.userHome / ".sbt" / "credentials.sbt")
 
 credentials := Seq(localCreds)
+
+parallelExecution in Test := false
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
