@@ -1,7 +1,7 @@
 sbt-scapegoat
 =============
 
-[<img src="https://img.shields.io/badge/Latest%20Release-1.1.0-yellowgreen.svg"/>](https://search.maven.org/search?q=g:com.sksamuel.scapegoat%20a:sbt-scapegoat)
+[![plugin release badge]][plugin release link]
 
 sbt-scapegoat is a plugin for SBT that integrates the scapegoat [static code analysis library](http://en.wikipedia.org/wiki/Static_program_analysis). Find out more about scapegoat at the [scapegoat project page](https://github.com/sksamuel/scapegoat).
 
@@ -16,14 +16,16 @@ sbt-scapegoat is an [auto plugin](https://typesafe.com/blog/preview-of-upcoming-
 Add the plugin to your build with the following in project/plugins.sbt:
 
 ```scala
-addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.1.0")
+addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.1.1") // Verify latest in badge above
 ```
 
-Then in your build sbt, set the version of scapegoat you wish to use eg:
+Then in your `build.sbt`, set the version of scapegoat you wish to use eg:
 
 ```scala
-scapegoatVersion in ThisBuild := "1.4.8"
+scapegoatVersion in ThisBuild := "1.4.9"
 ```
+
+![scapegoat release badge]
 
 That's it! You can now generate the scapegoat reports using the `scapegoat`
 task:
@@ -51,8 +53,10 @@ The full list of inspections can be seen at the [scapegoat](https://github.com/s
 
 sbt-scapegoat generates three sets of output. HTML and XML reports inside `target/scala-2.x/scapegoat-report` and also to the console during the build. The latter is useful so you don't have to open up files to see inspection warnings. However you can disable the console output if needed by setting the following key:
 
-`import com.sksamuel.scapegoat.sbt.ScapegoatSbtPlugin.autoImport._`
-`scapegoatConsoleOutput := false`
+```scala
+import com.sksamuel.scapegoat.sbt.ScapegoatSbtPlugin.autoImport._
+scapegoatConsoleOutput := false
+```
 
 #### Disabling inspections
 
@@ -87,7 +91,7 @@ You can suppress a specific warning by method or by class using the [`java.lang.
 Use the simple name of the inspection to be ignored as the argument, or use `"all"` to suppress all `scapegoat` warnings in the specified scope.
 
 Some examples:
-```
+```scala
 @SuppressWarnings(Array("all"))
 class Test {
   def hello : Unit = {
@@ -122,3 +126,8 @@ Please note that scapegoat is a new project. While it's been tested on some comm
 #### Reporting Issues
 
 If you have an error please do report it, but it would be helpful if the issues were logged at the [scapegoat](https://github.com/sksamuel/scapegoat) issues page, unless the bug is directly related to the plugin. Eg, inspection false positives or false negatives are errors in the scalac compiler plugin, not the sbt plugin.
+
+
+[plugin release badge]: https://maven-badges.herokuapp.com/maven-central/com.sksamuel.scapegoat/sbt-scapegoat/badge.svg?subject=Latest%20Plugin%20Release&color=yellowgreen
+[plugin release link]: https://maven-badges.herokuapp.com/maven-central/com.sksamuel.scapegoat/sbt-scapegoat
+[scapegoat release badge]: https://maven-badges.herokuapp.com/maven-central/com.sksamuel.scapegoat/scalac-scapegoat-plugin_2.13.6/badge.svg?subject=Latest%20scapegoat&color=yellowgreen
