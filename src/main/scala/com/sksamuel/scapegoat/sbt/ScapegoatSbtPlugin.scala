@@ -82,10 +82,10 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                 if (disabled.nonEmpty && verbose)
                   streamsValue.log.info("[scapegoat] disabled inspections: " + disabled.mkString(","))
 
-                // if inspection is present in enabled and disabled then disabled takes priority
+                // disabledInspections takes precedence over enabledInspections
                 val enabled = scapegoatEnabledInspections.value.filterNot(s => s.trim.isEmpty)
                 if(enabled.nonEmpty && verbose)
-                  streamsValue.log.info("[scapegoat] enabled inspections: " + disabled.mkString(","))
+                  streamsValue.log.info("[scapegoat] enabled inspections: " + enabled.mkString(","))
 
                 val ignoredFilePatterns = scapegoatIgnoredFiles.value.filterNot(_.trim.isEmpty)
                 if (ignoredFilePatterns.nonEmpty && verbose)
