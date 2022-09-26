@@ -50,6 +50,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     scapegoatMaxWarnings := -1,
     scapegoatMaxErrors := -1,
     scapegoatDisabledInspections := Nil,
+    scapegoatEnabledInspections := Nil,
     scapegoatIgnoredFiles := Nil,
     scapegoatReports := Seq("all"),
     scapegoatSourcePrefix := "src/main/scala",
