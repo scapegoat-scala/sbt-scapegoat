@@ -8,11 +8,13 @@ scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
-scalaVersion := "2.13.10"
+// Align Scala (major) version and SBT versions
+// This avoids issues from running commands without ^ prefix for cross compiling plugins
+scalaVersion := "2.12.17"
 
 sbtPlugin := true
 
-crossSbtVersions := Seq("0.13.17", "1.5.5")
+crossSbtVersions := Seq("0.13.18", "1.5.8")
 
 publishMavenStyle := true
 
