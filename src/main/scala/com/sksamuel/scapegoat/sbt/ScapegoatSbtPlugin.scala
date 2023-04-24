@@ -116,11 +116,11 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     } ++ Seq(
       (compile in Scapegoat) := ((compile in Scapegoat) dependsOn scapegoatClean).value,
       scapegoat := (compile in Scapegoat).value,
-      scapegoatCleanTask := doScapegoatClean((scapegoatRunAlways in ThisBuild).value, (classDirectory in Scapegoat).value, streams.value.log),
+      scapegoatCleanTask := doScapegoatClean((scapegoatRunAlways in ThisProject).value, (classDirectory in Scapegoat).value, streams.value.log),
       scapegoatClean := doScapegoatClean(true, (classDirectory in Scapegoat).value, streams.value.log),
       // FIXME Cannot seem to make this a build setting (compile:crossTarget is an undefined setting)
       scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
-      libraryDependencies ++= Seq(crossVersion(GroupId %% ArtifactId % (scapegoatVersion in ThisBuild).value % Provided)))
+      libraryDependencies ++= Seq(crossVersion(GroupId %% ArtifactId % (scapegoatVersion in ThisProject).value % Provided)))
   }
 
   private def crossVersion(mod: ModuleID) = {
