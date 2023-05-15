@@ -15,17 +15,8 @@ jobs:
         with:
           java-version: adopt@1.8
       - run: |
-          mkdir ~/.gnupg && chmod 700 ~/.gnupg
-          echo use-agent >> ~/.gnupg/gpg.conf
-          echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
-          echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
-          chmod 600 ~/.gnupg/*
-          echo RELOADAGENT | gpg-connect-agent
           echo ${PGP_SECRET:0:4}...${PGP_SECRET: -4}
-          echo $PGP_SECRET | base64 --decode | gpg --import --no-tty --batch --yes
-        env:
-          PGP_SECRET: ${{secrets.PGP_SECRET}}
-      - run: sbt ci-release
+          sbt ci-release
         env:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
