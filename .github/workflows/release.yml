@@ -15,6 +15,7 @@ jobs:
         with:
           java-version: adopt@1.8
       - run: |
+          export PGP_SECRET=$(echo -n $PGP_SECRET) | base64)
           echo ${PGP_SECRET:0:4}...${PGP_SECRET: -4}
           sbt ci-release
         env:
