@@ -109,6 +109,17 @@ class Test2 {
 } 
 ```
 
+#### Cross build for Scala 2.11
+
+```scala
+scapegoatVersion := {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, 11)) => "1.4.9"
+    case _ => "2.1.1"
+  }
+}
+```
+
 #### Inspection warning level overrides
 
 If you want to change the warning level of an inspection, for example to downgrade "TraversableHead" and "OptionGet" from Errors to Warnings, add the following to your build.sbt:
