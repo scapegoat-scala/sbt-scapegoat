@@ -3,6 +3,8 @@ package com.sksamuel.scapegoat.sbt
 import sbt._
 import sbt.Keys._
 
+import scala.language.postfixOps
+
 object ScapegoatSbtPlugin extends AutoPlugin {
 
   val GroupId = "com.sksamuel.scapegoat"
@@ -41,8 +43,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   override def trigger = allRequirements
 
-  override def buildSettings = super.buildSettings ++ Seq(
-    scapegoatVersion := "1.0.0",
+  override def buildSettings: Seq[Def.Setting[_]] = super.buildSettings ++ Seq(
     scapegoatRunAlways := true,
     scapegoatConsoleOutput := true,
     scapegoatVerbose := true,
@@ -56,7 +57,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     scapegoatSourcePrefix := "src/main/scala",
     scapegoatMinimalWarnLevel := "info")
 
-  override def projectSettings = {
+  override def projectSettings: Seq[Def.Setting[_]] = {
     inConfig(Scapegoat) {
       Defaults.compileSettings ++
         Seq(
@@ -120,7 +121,17 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       scapegoatClean := doScapegoatClean(true, (classDirectory in Scapegoat).value, streams.value.log),
       // FIXME Cannot seem to make this a build setting (compile:crossTarget is an undefined setting)
       scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
-      libraryDependencies ++= Seq(crossVersion(GroupId %% ArtifactId % (scapegoatVersion in ThisProject).value % Provided)))
+      libraryDependencies ++= {
+        val selectedScapegoatVersion = (scapegoatVersion?).value.getOrElse {
+          scalaVersion.value match {
+            // To give a better out of the box experience, default to a recent version of Scapegoat for known Scala versions
+            case "2.13.10" | "2.13.9" | "2.12.17" | "2.12.16" => "2.1.1"
+            // Default to the latest version with Scala 2.11 support to improve apparent compatibility
+            case _ => "1.4.17"
+          }
+        }
+        Seq(crossVersion(GroupId %% ArtifactId % selectedScapegoatVersion % Provided))
+      })
   }
 
   private def crossVersion(mod: ModuleID) = {

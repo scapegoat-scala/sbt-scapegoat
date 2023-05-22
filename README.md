@@ -19,10 +19,14 @@ Add the plugin to your build with the following in project/plugins.sbt:
 addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.1.1") // Verify latest in badge above
 ```
 
-Then in your `build.sbt`, set the version of scapegoat you wish to use eg:
+The plugin has a default Scapegoat version depending on the Scala version you are using.
+This version may not always be the latest version of Scapegoat, nor does it always pick a compatible version.
 
+In case you wish to override the version you can do so by setting the `scapegoatVersion` setting in your `build.sbt`.
+
+eg.
 ```scala
-scapegoatVersion in ThisBuild := "1.4.9"
+ThisBuild / scapegoatVersion := "2.1.1"
 ```
 
 ![scapegoat release badge]
