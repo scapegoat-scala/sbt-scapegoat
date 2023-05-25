@@ -1,0 +1,5 @@
+> compile
+-> scapegoat
+$ exists target/scala-2.13/scapegoat-report/scapegoat.xml
+> makePom
+> check

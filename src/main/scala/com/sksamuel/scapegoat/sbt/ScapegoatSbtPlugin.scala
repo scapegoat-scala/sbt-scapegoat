@@ -41,6 +41,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     }
   }
 
+  override def projectConfigurations: Seq[Configuration] = Seq(Scapegoat)
+
   override def trigger = allRequirements
 
   override def buildSettings: Seq[Def.Setting[_]] = super.buildSettings ++ Seq(
@@ -66,7 +68,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
           unmanagedClasspath := (unmanagedClasspath in Compile).value,
           scalacOptions := {
             // find all deps for the compile scope
-            val scapegoatDependencies = (update in Scapegoat).value matching configurationFilter(Provided.name)
+            val scapegoatDependencies = (update in Scapegoat).value matching configurationFilter(Scapegoat.name)
             // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
             scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
               case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies ($scapegoatDependencies)")
@@ -121,8 +123,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       scapegoatClean := doScapegoatClean(true, (classDirectory in Scapegoat).value, streams.value.log),
       // FIXME Cannot seem to make this a build setting (compile:crossTarget is an undefined setting)
       scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
-      libraryDependencies ++= {
-        val selectedScapegoatVersion = (scapegoatVersion?).value.getOrElse {
+      libraryDependencies += {
+        val selectedScapegoatVersion = (scapegoatVersion ?).value.getOrElse {
           scalaVersion.value match {
             // To give a better out of the box experience, default to a recent version of Scapegoat for known Scala versions
             case "2.13.10" | "2.13.9" | "2.12.17" | "2.12.16" => "2.1.1"
@@ -130,7 +132,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
             case _ => "1.4.17"
           }
         }
-        Seq(crossVersion(GroupId %% ArtifactId % selectedScapegoatVersion % Provided))
+        crossVersion(GroupId %% ArtifactId % selectedScapegoatVersion) % Scapegoat
       })
   }
 
