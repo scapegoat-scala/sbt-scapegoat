@@ -61,12 +61,12 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     inConfig(Scapegoat) {
       Defaults.compileSettings ++
         Seq(
-          sources := (sources in Compile).value,
-          managedClasspath := (managedClasspath in Compile).value,
-          unmanagedClasspath := (unmanagedClasspath in Compile).value,
+          sources := (Compile / sources).value,
+          managedClasspath := (Compile / managedClasspath).value,
+          unmanagedClasspath := (Compile / unmanagedClasspath).value,
           scalacOptions := {
             // find all deps for the compile scope
-            val scapegoatDependencies = (update in Scapegoat).value matching configurationFilter(Provided.name)
+            val scapegoatDependencies = (Scapegoat / update).value matching configurationFilter(Provided.name)
             // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
             scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
               case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies ($scapegoatDependencies)")
@@ -101,7 +101,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                 if (customMinimalWarnLevel.nonEmpty)
                   streamsValue.log.info("[scapegoat] minimal warn level: " + customMinimalWarnLevel)
 
-                (scalacOptions in Compile).value ++ Seq(
+                (Compile / scalacOptions).value ++ Seq(
                   Some("-Xplugin:" + classpath.getAbsolutePath),
                   Some("-P:scapegoat:verbose:" + scapegoatVerbose.value),
                   Some("-P:scapegoat:consoleOutput:" + scapegoatConsoleOutput.value),
@@ -115,12 +115,12 @@ object ScapegoatSbtPlugin extends AutoPlugin {
             }
           })
     } ++ Seq(
-      (compile in Scapegoat) := ((compile in Scapegoat) dependsOn scapegoatClean).value,
-      scapegoat := (compile in Scapegoat).value,
-      scapegoatCleanTask := doScapegoatClean((scapegoatRunAlways in ThisBuild).value, (classDirectory in Scapegoat).value, streams.value.log),
-      scapegoatClean := doScapegoatClean(true, (classDirectory in Scapegoat).value, streams.value.log),
+      (Scapegoat / compile) := ((Scapegoat / compile) dependsOn scapegoatClean).value,
+      scapegoat := (Scapegoat / compile).value,
+      scapegoatCleanTask := doScapegoatClean((ThisBuild / scapegoatRunAlways).value, (Scapegoat / classDirectory).value, streams.value.log),
+      scapegoatClean := doScapegoatClean(force = true, (Scapegoat / classDirectory).value, streams.value.log),
       // FIXME Cannot seem to make this a build setting (compile:crossTarget is an undefined setting)
-      scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
+      scapegoatOutputPath := (Compile / crossTarget).value.getAbsolutePath + "/scapegoat-report",
       libraryDependencies ++= {
         val selectedScapegoatVersion = (scapegoatVersion?).value.getOrElse {
           scalaVersion.value match {
@@ -135,7 +135,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
   }
 
   private def crossVersion(mod: ModuleID) = {
-    val components = mod.revision.split('.').take(2).map { c => try { c.toInt } catch { case e: Exception => 0 } }
+    val components = mod.revision.split('.').take(2).map { c => try { c.toInt } catch { case _: Exception => 0 } }
 
     components match {
       // versions >= 1.4.0 use the full cross version
