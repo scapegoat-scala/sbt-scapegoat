@@ -26,6 +26,12 @@ javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 scalaVersion := "2.12.17"
 
 sbtPlugin := true
+enablePlugins(SbtPlugin)
+scriptedLaunchOpts := {
+  scriptedLaunchOpts.value ++ Seq("-Dplugin.version=" + version.value)
+}
+scriptedBufferLog := false
+
 
 crossSbtVersions := Seq("0.13.18", "1.5.8")
 
