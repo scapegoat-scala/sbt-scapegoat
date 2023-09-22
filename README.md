@@ -1,7 +1,7 @@
 sbt-scapegoat
 =============
 
-[![plugin release badge]][plugin release link]
+![plugin release badge]
 
 sbt-scapegoat is a plugin for SBT that integrates the scapegoat [static code analysis library](http://en.wikipedia.org/wiki/Static_program_analysis). Find out more about scapegoat at the [scapegoat project page](https://github.com/sksamuel/scapegoat).
 
@@ -16,7 +16,7 @@ sbt-scapegoat is an [auto plugin](https://typesafe.com/blog/preview-of-upcoming-
 Add the plugin to your build with the following in project/plugins.sbt:
 
 ```scala
-addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.1.1") // Verify latest in badge above
+addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.2.2") // Verify latest in badge above
 ```
 
 The plugin has a default Scapegoat version depending on the Scala version you are using.
@@ -143,6 +143,6 @@ Please note that scapegoat is a new project. While it's been tested on some comm
 If you have an error please do report it, but it would be helpful if the issues were logged at the [scapegoat](https://github.com/sksamuel/scapegoat) issues page, unless the bug is directly related to the plugin. Eg, inspection false positives or false negatives are errors in the scalac compiler plugin, not the sbt plugin.
 
 
-[plugin release badge]: https://maven-badges.herokuapp.com/maven-central/com.sksamuel.scapegoat/sbt-scapegoat/badge.svg?subject=Latest%20Plugin%20Release&color=yellowgreen
+[plugin release badge]: https://img.shields.io/github/v/tag/scapegoat-scala/sbt-scapegoat?label=Latest%20Release
 [plugin release link]: https://maven-badges.herokuapp.com/maven-central/com.sksamuel.scapegoat/sbt-scapegoat
 [scapegoat release badge]: https://maven-badges.herokuapp.com/maven-central/com.sksamuel.scapegoat/scalac-scapegoat-plugin_2.13.6/badge.svg?subject=Latest%20scapegoat&color=yellowgreen
