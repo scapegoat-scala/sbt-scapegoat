@@ -127,7 +127,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
         val selectedScapegoatVersion = (scapegoatVersion ?).value.getOrElse {
           scalaVersion.value match {
             // To give a better out of the box experience, default to a recent version of Scapegoat for known Scala versions
-            case "2.13.13" | "2.13.12" | "2.12.19" | "2.12.18" => "2.1.5"
+            case "2.13.14" | "2.13.13" | "2.12.19" | "2.12.18" => "2.1.6"
+            case "2.13.12" => "2.1.5"
             case "2.13.11" | "2.12.17" => "2.1.4"
             case "2.13.10" => "2.1.2"
             case "2.13.9" | "2.12.16" => "2.1.1"
