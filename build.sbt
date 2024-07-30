@@ -37,7 +37,3 @@ crossSbtVersions := Seq("0.13.18", "1.5.8")
 
 Test / publishArtifact := false
 Test / parallelExecution := false
-
-sonatypeCredentialHost := "s01.oss.sonatype.org"
-sonatypeRepository := "https://s01.oss.sonatype.org/service/local"
-
