@@ -9,6 +9,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   val GroupId = "com.sksamuel.scapegoat"
   val ArtifactId = "scalac-scapegoat-plugin"
+  private val scalaVersionsForLatest = List("2.13.14", "2.13.13", "2.12.20", "2.12.19",  "2.12.18")
 
   object autoImport {
     val Scapegoat = config("scapegoat") extend Compile
@@ -126,8 +127,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
       libraryDependencies += {
         val selectedScapegoatVersion = (scapegoatVersion ?).value.getOrElse {
           scalaVersion.value match {
-            // To give a better out of the box experience, default to a recent version of Scapegoat for known Scala versions
-            case "2.13.14" | "2.13.13" | "2.12.19" | "2.12.18" => "2.1.6"
+            // To give a better out-of-the-box experience, default to a recent version of Scapegoat for known Scala versions
+            case  version if scalaVersionsForLatest.contains(version) => "2.1.6"
             case "2.13.12" => "2.1.5"
             case "2.13.11" | "2.12.17" => "2.1.4"
             case "2.13.10" => "2.1.2"
