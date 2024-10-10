@@ -57,7 +57,8 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     scapegoatIgnoredFiles := Nil,
     scapegoatReports := Seq("all"),
     scapegoatSourcePrefix := "src/main/scala",
-    scapegoatMinimalWarnLevel := "info")
+    scapegoatMinimalWarnLevel := "info",
+  )
 
   override def projectSettings: Seq[Def.Setting[_]] = {
     inConfig(Scapegoat) {
@@ -71,9 +72,9 @@ object ScapegoatSbtPlugin extends AutoPlugin {
             val scapegoatDependencies = (update in Scapegoat).value matching configurationFilter(Scapegoat.name)
             // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
             scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
-              case None => throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies ($scapegoatDependencies)")
+              case None =>
+                throw new Exception(s"Fatal: $ArtifactId not in libraryDependencies ($scapegoatDependencies)")
               case Some(classpath) =>
-
                 val verbose = scapegoatVerbose.value
                 val path = scapegoatOutputPath.value
                 val reports = scapegoatReports.value
@@ -110,16 +111,24 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                   Some("-P:scapegoat:dataDir:" + path),
                   if (enabled.isEmpty) None else Some("-P:scapegoat:enabledInspections:" + enabled.mkString(":")),
                   if (disabled.isEmpty) None else Some("-P:scapegoat:disabledInspections:" + disabled.mkString(":")),
-                  if (ignoredFilePatterns.isEmpty) None else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")),
+                  if (ignoredFilePatterns.isEmpty) None
+                  else Some("-P:scapegoat:ignoredFiles:" + ignoredFilePatterns.mkString(":")),
                   if (reports.isEmpty) None else Some("-P:scapegoat:reports:" + reports.mkString(":")),
                   if (customSourcePrefix.isEmpty) None else Some(s"-P:scapegoat:sourcePrefix:$customSourcePrefix"),
-                  if (customMinimalWarnLevel.isEmpty) None else Some(s"-P:scapegoat:minimalLevel:$customMinimalWarnLevel")).flatten
+                  if (customMinimalWarnLevel.isEmpty) None
+                  else Some(s"-P:scapegoat:minimalLevel:$customMinimalWarnLevel"),
+                ).flatten
             }
-          })
+          },
+        )
     } ++ Seq(
       (compile in Scapegoat) := ((compile in Scapegoat) dependsOn scapegoatClean).value,
       scapegoat := (compile in Scapegoat).value,
-      scapegoatCleanTask := doScapegoatClean((scapegoatRunAlways in ThisBuild).value, (classDirectory in Scapegoat).value, streams.value.log),
+      scapegoatCleanTask := doScapegoatClean(
+        (scapegoatRunAlways in ThisBuild).value,
+        (classDirectory in Scapegoat).value,
+        streams.value.log,
+      ),
       scapegoatClean := doScapegoatClean(true, (classDirectory in Scapegoat).value, streams.value.log),
       // FIXME Cannot seem to make this a build setting (compile:crossTarget is an undefined setting)
       scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
@@ -140,11 +149,15 @@ object ScapegoatSbtPlugin extends AutoPlugin {
           }
         }
         crossVersion(GroupId %% ArtifactId % selectedScapegoatVersion) % Scapegoat
-      })
+      },
+    )
   }
 
   private def crossVersion(mod: ModuleID) = {
-    val components = mod.revision.split('.').take(2).map { c => try { c.toInt } catch { case e: Exception => 0 } }
+    val components = mod.revision.split('.').take(2).map { c =>
+      try { c.toInt }
+      catch { case e: Exception => 0 }
+    }
 
     components match {
       // versions >= 1.4.0 use the full cross version
