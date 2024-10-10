@@ -11,7 +11,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
   val ArtifactId = "scalac-scapegoat-plugin"
 
   object autoImport {
-    val Scapegoat = config("scapegoat") extend Compile
+    val Scapegoat = config("scapegoat")
 
     lazy val scapegoat = taskKey[Unit]("Run scapegoat quality checks")
     lazy val scapegoatCleanTask = taskKey[Unit]("Conditionally clean the scapegoat output directories")
