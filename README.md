@@ -3,24 +3,25 @@ sbt-scapegoat
 
 ![plugin release badge]
 
-sbt-scapegoat is a plugin for SBT that integrates the scapegoat [static code analysis library](http://en.wikipedia.org/wiki/Static_program_analysis). Find out more about scapegoat at the [scapegoat project page](https://github.com/sksamuel/scapegoat).
+sbt-scapegoat is a plugin for SBT that integrates the scapegoat [static code analysis library](http://en.wikipedia.org/wiki/Static_program_analysis).
+Find out more about scapegoat at the [scapegoat project page](https://github.com/sksamuel/scapegoat).
 
 #### How to use
 
-sbt-scapegoat is an [auto plugin](https://typesafe.com/blog/preview-of-upcoming-sbt-10-features-read-about-the-new-plugins). This means you need SBT 0.13.5 or higher. If you are using an earlier 0.13.x build, you should be able to upgrade to 0.13.5 without any issues.
+sbt-scapegoat is an [auto plugin](https://typesafe.com/blog/preview-of-upcoming-sbt-10-features-read-about-the-new-plugins).
+This means the `scapegoat` task will be available without any configuration.
 
-*Please note*: [scapegoat](https://github.com/sksamuel/scapegoat) only works with Scala 2.11.x, 2.12.x, 2.13.x. There are no plans to release a 2.10.x branch.
-
-*Another note* [scapegoat] Plugin has been migrated to support scala version 2.12.3 and sbt version 1.0.1
+*Please note*: [scapegoat](https://github.com/sksamuel/scapegoat) only works with since Scala 2.11.x and newer.
+There are no plans to release a 2.10.x branch.
 
 Add the plugin to your build with the following in project/plugins.sbt:
 
 ```scala
-addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.2.2") // Verify latest in badge above
+addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.2.6") // Verify latest in badge above
 ```
 
 The plugin has a default Scapegoat version depending on the Scala version you are using.
-This version may not always be the latest version of Scapegoat, nor does it always pick a compatible version.
+This version may not always be the latest version of Scapegoat, nor does it always pick a compatible version (mostly on older Scala versions).
 
 In case you wish to override the version you can do so by setting the `scapegoatVersion` setting in your `build.sbt`.
 
@@ -31,8 +32,7 @@ ThisBuild / scapegoatVersion := "2.1.1"
 
 ![scapegoat release badge]
 
-That's it! You can now generate the scapegoat reports using the `scapegoat`
-task:
+That's it! You can now generate the scapegoat reports using the `scapegoat` task:
 
 ```
 > scapegoat
@@ -46,8 +46,10 @@ task:
 [info] [scapegoat]: Written XML report [/home/sam/development/workspace/elastic4s/target/scala-2.11/scapegoat-report/scapegoat.xml]
 ```
 
-You should find the reports inside `target/scala-2.11/scapegoat-report`. By default, the reports will be regenerated for all files on every invocation of the `scapegoat` task. If you'd prefer to only have reports generated for files that have changed between invocations, you can set the `scapegoatRunAlways` setting to false. You can then manually force a full inspection by invoking the `scapegoatClean` task, or by doing a full `clean`.
-
+You should find the reports inside `target/scala-2.11/scapegoat-report`.
+By default, the reports will be regenerated for all files on every invocation of the `scapegoat` task.
+If you'd prefer to only have reports generated for files that have changed between invocations, you can set the `scapegoatRunAlways` setting to false.
+You can then manually force a full inspection by invoking the `scapegoatClean` task, or by doing a full `clean`.
 
 #### Inspections list
 
@@ -90,7 +92,7 @@ Since this is just regex matching we can do whatever we want - for example we co
 
 #### Suppressing Warnings by Method or Class
 
-You can suppress a specific warning by method or by class using the [`java.lang.SuppressWarnings`](http://docs.oracle.com/javase/7/docs/api/java/lang/SuppressWarnings.html) anotation.
+You can suppress a specific warning by method or by class using the [`java.lang.SuppressWarnings`](http://docs.oracle.com/javase/7/docs/api/java/lang/SuppressWarnings.html) annotation.
 
 Use the simple name of the inspection to be ignored as the argument, or use `"all"` to suppress all `scapegoat` warnings in the specified scope.
 
