@@ -1,7 +1,8 @@
 lazy val root = (project in file("."))
   .settings(
     name := "test-scapegoat-inclusion-in-pom",
-    ThisBuild / scalaVersion := "2.13.10",
+    libraryDependencies += "org.typelevel" %% "cats-core" % "2.12.0",
+    ThisBuild / scalaVersion := "2.13.14",
     TaskKey[Unit]("check") := {
       val pom = scala.xml.XML.loadFile(makePom.value)
       (pom \\ "dependencies").map(_ \ "dependency").find(dependency =>
