@@ -11,7 +11,6 @@ jobs:
         java: [8]
         sbt:
           - 1.10.2
-          - 0.13.18
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -28,9 +27,4 @@ jobs:
           path: ~/.sbt
           key: sbt-${{hashFiles('**/*.sbt')}}-${{hashFiles('project/build.properties')}}-${{matrix.sbt}}
           restore-keys: sbt-
-      # Full regression on sbt 1+
       - run: sbt "^^${{matrix.sbt}}; test; scripted"
-        if: ${{ matrix.sbt != '0.13.18' }}
-      # Basic testing for 0.13.x only
-      - run: sbt "^^${{matrix.sbt}}; test"
-        if: ${{ matrix.sbt == '0.13.18' }}

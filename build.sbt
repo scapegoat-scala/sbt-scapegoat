@@ -32,8 +32,7 @@ scriptedLaunchOpts := {
 }
 scriptedBufferLog := false
 
-
-crossSbtVersions := Seq("0.13.18", "1.5.8")
+crossSbtVersions := Seq("1.5.8")
 
 Test / publishArtifact := false
 Test / parallelExecution := false
