@@ -1,4 +1,4 @@
 resolvers += Classpaths.sbtPluginReleases
 
-addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.2")
 addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.7.0")
