@@ -34,7 +34,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   import autoImport._
 
-  def doScapegoatClean(force: Boolean, classesDir: File, log: Logger) {
+  def doScapegoatClean(force: Boolean, classesDir: File, log: Logger): Unit = {
     if (force) {
       log.info(s"[scapegoat] Removing scapegoat class directory: $classesDir")
       IO.delete(Seq(classesDir))
