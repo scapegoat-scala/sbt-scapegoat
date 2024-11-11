@@ -34,7 +34,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   import autoImport._
 
-  def doScapegoatClean(force: Boolean, classesDir: File, log: Logger) {
+  def doScapegoatClean(force: Boolean, classesDir: File, log: Logger): Unit = {
     if (force) {
       log.info(s"[scapegoat] Removing scapegoat class directory: $classesDir")
       IO.delete(Seq(classesDir))
@@ -64,12 +64,12 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     inConfig(Scapegoat) {
       Defaults.compileSettings ++
         Seq(
-          sources := (sources in Compile).value,
-          managedClasspath := (managedClasspath in Compile).value,
-          unmanagedClasspath := (unmanagedClasspath in Compile).value,
+          sources := (Compile / sources).value,
+          managedClasspath := (Compile / managedClasspath).value,
+          unmanagedClasspath := (Compile / unmanagedClasspath).value,
           scalacOptions := {
             // find all deps for the compile scope
-            val scapegoatDependencies = (update in Scapegoat).value matching configurationFilter(Scapegoat.name)
+            val scapegoatDependencies = (Scapegoat / update).value matching configurationFilter(Scapegoat.name)
             // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
             scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
               case None =>
@@ -104,7 +104,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
                 if (customMinimalWarnLevel.nonEmpty)
                   streamsValue.log.info("[scapegoat] minimal warn level: " + customMinimalWarnLevel)
 
-                (scalacOptions in Compile).value ++ Seq(
+                (Compile / scalacOptions).value ++ Seq(
                   Some("-Xplugin:" + classpath.getAbsolutePath),
                   Some("-P:scapegoat:verbose:" + scapegoatVerbose.value),
                   Some("-P:scapegoat:consoleOutput:" + scapegoatConsoleOutput.value),
@@ -122,16 +122,16 @@ object ScapegoatSbtPlugin extends AutoPlugin {
           },
         )
     } ++ Seq(
-      (compile in Scapegoat) := ((compile in Scapegoat) dependsOn scapegoatClean).value,
-      scapegoat := (compile in Scapegoat).value,
+      (Scapegoat / compile) := ((Scapegoat / compile) dependsOn scapegoatClean).value,
+      scapegoat := (Scapegoat / compile).value,
       scapegoatCleanTask := doScapegoatClean(
-        (scapegoatRunAlways in ThisBuild).value,
-        (classDirectory in Scapegoat).value,
+        (ThisBuild / scapegoatRunAlways).value,
+        (Scapegoat / classDirectory).value,
         streams.value.log,
       ),
-      scapegoatClean := doScapegoatClean(true, (classDirectory in Scapegoat).value, streams.value.log),
+      scapegoatClean := doScapegoatClean(true, (Scapegoat / classDirectory).value, streams.value.log),
       // FIXME Cannot seem to make this a build setting (compile:crossTarget is an undefined setting)
-      scapegoatOutputPath := (crossTarget in Compile).value.getAbsolutePath + "/scapegoat-report",
+      scapegoatOutputPath := (Compile / crossTarget).value.getAbsolutePath + "/scapegoat-report",
       libraryDependencies += {
         val selectedScapegoatVersion = (scapegoatVersion ?).value.getOrElse {
           scalaVersion.value match {
