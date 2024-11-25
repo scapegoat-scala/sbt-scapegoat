@@ -1,5 +1,9 @@
-> compile
+> clean
 -> scapegoat
 $ exists target/scala-2.13/scapegoat-report/scapegoat.xml
+-$ exists target/scala-2.13/classes/Boot.class
+> clean
+> compile
 > makePom
+-$ exists target/scala-2.13/scapegoat-report/scapegoat.xml
 > check

@@ -12,6 +12,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   object autoImport {
     val Scapegoat = config("scapegoat") extend Compile
+    val ScapegoatDeps = (config("scapegoat-dep") extend Compile).hide
 
     lazy val scapegoat = taskKey[Unit]("Run scapegoat quality checks")
     lazy val scapegoatCleanTask = taskKey[Unit]("Conditionally clean the scapegoat output directories")
@@ -41,7 +42,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     }
   }
 
-  override def projectConfigurations: Seq[Configuration] = Seq(Scapegoat)
+  override def projectConfigurations: Seq[Configuration] = Seq(ScapegoatDeps)
 
   override def trigger = allRequirements
 
@@ -69,7 +70,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
           unmanagedClasspath := (Compile / unmanagedClasspath).value,
           scalacOptions := {
             // find all deps for the compile scope
-            val scapegoatDependencies = (Scapegoat / update).value matching configurationFilter(Scapegoat.name)
+            val scapegoatDependencies = (ScapegoatDeps / update).value matching configurationFilter(ScapegoatDeps.name)
             // ensure we have the scapegoat dependency on the classpath and if so add it as a scalac plugin
             scapegoatDependencies.find(_.getAbsolutePath.contains(ArtifactId)) match {
               case None =>
@@ -149,7 +150,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
             case _ => "1.4.17"
           }
         }
-        crossVersion(GroupId %% ArtifactId % selectedScapegoatVersion) % Scapegoat
+        crossVersion(GroupId %% ArtifactId % selectedScapegoatVersion) % ScapegoatDeps
       },
     )
   }
