@@ -20,9 +20,13 @@ lazy val root = (project in file("."))
 
 TaskKey[Unit]("check") := {
   if ((moduleA / scapegoatVersion).value != "2.1.0") {
-    sys.error(s"Expected Scapegoat version to default to 2.1.0 in module-a for scala ${scalaVersion.value}, got: ${scapegoatVersion.value}")
+    sys.error(
+      s"Expected Scapegoat version to default to 2.1.0 in module-a for scala ${scalaVersion.value}, got: ${scapegoatVersion.value}",
+    )
   }
   if ((moduleB / scapegoatVersion).value != "2.1.0") {
-    sys.error(s"Expected Scapegoat version to default to 2.1.0 in module-b for scala ${scalaVersion.value}, got: ${scapegoatVersion.value}")
+    sys.error(
+      s"Expected Scapegoat version to default to 2.1.0 in module-b for scala ${scalaVersion.value}, got: ${scapegoatVersion.value}",
+    )
   }
 }
