@@ -18,12 +18,20 @@ lazy val root = (project in file("."))
   )
 
 TaskKey[Unit]("check") := {
-  val scapegoatModuleA = (moduleA / libraryDependencies).value.find(d => d.organization == "com.sksamuel.scapegoat" && d.name == "scalac-scapegoat-plugin")
-  val scapegoatModuleB = (moduleB / libraryDependencies).value.find(d => d.organization == "com.sksamuel.scapegoat" && d.name == "scalac-scapegoat-plugin")
+  val scapegoatModuleA = (moduleA / libraryDependencies).value.find(d =>
+    d.organization == "com.sksamuel.scapegoat" && d.name == "scalac-scapegoat-plugin",
+  )
+  val scapegoatModuleB = (moduleB / libraryDependencies).value.find(d =>
+    d.organization == "com.sksamuel.scapegoat" && d.name == "scalac-scapegoat-plugin",
+  )
   if (!scapegoatModuleA.map(_.revision).contains("2.1.2")) {
-    sys.error(s"Expected Scapegoat version to default to 2.1.2 in module-a for scala ${scalaVersion.value}, got: ${scapegoatModuleA}")
+    sys.error(
+      s"Expected Scapegoat version to default to 2.1.2 in module-a for scala ${scalaVersion.value}, got: ${scapegoatModuleA}",
+    )
   }
   if (!scapegoatModuleB.map(_.revision).contains("2.1.2")) {
-    sys.error(s"Expected Scapegoat version to default to 2.1.2 in module-b for scala ${scalaVersion.value}, got: ${scapegoatModuleB}")
+    sys.error(
+      s"Expected Scapegoat version to default to 2.1.2 in module-b for scala ${scalaVersion.value}, got: ${scapegoatModuleB}",
+    )
   }
 }

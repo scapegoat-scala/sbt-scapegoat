@@ -6,16 +6,16 @@ scmInfo := Some(
   ScmInfo(
     url("https://github.com/scapegoat-scala/sbt-scapegoat"),
     "scm:git@github.com:scapegoat-scala/sbt-scapegoat.git",
-    Some("scm:git@github.com:scapegoat-scala/sbt-scapegoat.git")
-  )
+    Some("scm:git@github.com:scapegoat-scala/sbt-scapegoat.git"),
+  ),
 )
 developers := List(
   Developer(
     "sksamuel",
     "sksamuel",
     "@sksamuel",
-    url("https://github.com/sksamuel")
-  )
+    url("https://github.com/sksamuel"),
+  ),
 )
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-encoding", "utf8")
