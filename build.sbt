@@ -31,6 +31,17 @@ scriptedLaunchOpts := {
   scriptedLaunchOpts.value ++ Seq("-Dplugin.version=" + version.value)
 }
 scriptedBufferLog := false
+credentials := (for {
+  username <- sys.env.get("SONATYPE_USERNAME")
+  password <- sys.env.get("SONATYPE_PASSWORD")
+} yield {
+  Credentials(
+    "Sonatype Nexus Repository Manager",
+    "oss.sonatype.org",
+    username,
+    password,
+  )
+}).toSeq
 
 crossSbtVersions := Seq("1.5.8")
 
