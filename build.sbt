@@ -31,7 +31,6 @@ scriptedLaunchOpts := {
   scriptedLaunchOpts.value ++ Seq("-Dplugin.version=" + version.value)
 }
 scriptedBufferLog := false
-ThisBuild / publishTo := localStaging.value
 crossSbtVersions := Seq("1.5.8")
 
 Test / publishArtifact := false
