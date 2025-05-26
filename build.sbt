@@ -31,7 +31,8 @@ scriptedLaunchOpts := {
   scriptedLaunchOpts.value ++ Seq("-Dplugin.version=" + version.value)
 }
 scriptedBufferLog := false
-credentials := (for {
+ThisBuild / publishTo := localStaging.value
+ThisBuild / credentials := (for {
   username <- sys.env.get("SONATYPE_USERNAME")
   password <- sys.env.get("SONATYPE_PASSWORD")
 } yield {
