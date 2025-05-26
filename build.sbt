@@ -32,18 +32,6 @@ scriptedLaunchOpts := {
 }
 scriptedBufferLog := false
 ThisBuild / publishTo := localStaging.value
-ThisBuild / credentials := (for {
-  username <- sys.env.get("SONATYPE_USERNAME")
-  password <- sys.env.get("SONATYPE_PASSWORD")
-} yield {
-  Credentials(
-    "Sonatype Nexus Repository Manager",
-    "oss.sonatype.org",
-    username,
-    password,
-  )
-}).toSeq
-
 crossSbtVersions := Seq("1.5.8")
 
 Test / publishArtifact := false
