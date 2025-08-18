@@ -1,7 +1,7 @@
 package com.sksamuel.scapegoat.sbt
 
-import sbt._
-import sbt.Keys._
+import sbt.*
+import sbt.Keys.*
 
 import scala.language.postfixOps
 
@@ -33,7 +33,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     lazy val scapegoatMinimalWarnLevel = settingKey[String]("minimal level of inspection to be displayed in reports.")
   }
 
-  import autoImport._
+  import autoImport.*
 
   def doScapegoatClean(force: Boolean, classesDir: File, log: Logger): Unit = {
     if (force) {
@@ -46,7 +46,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
 
   override def trigger = allRequirements
 
-  override def buildSettings: Seq[Def.Setting[_]] = super.buildSettings ++ Seq(
+  override def buildSettings: Seq[Def.Setting[?]] = super.buildSettings ++ Seq(
     scapegoatRunAlways := true,
     scapegoatConsoleOutput := true,
     scapegoatVerbose := true,
@@ -61,7 +61,7 @@ object ScapegoatSbtPlugin extends AutoPlugin {
     scapegoatMinimalWarnLevel := "info",
   )
 
-  override def projectSettings: Seq[Def.Setting[_]] = {
+  override def projectSettings: Seq[Def.Setting[?]] = {
     inConfig(Scapegoat) {
       Defaults.compileSettings ++
         Seq(
