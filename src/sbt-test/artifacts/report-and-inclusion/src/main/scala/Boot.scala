@@ -1,4 +1,4 @@
-import cats.syntax.all._
+import cats.syntax.all.*
 
 object Boot extends App {
 
