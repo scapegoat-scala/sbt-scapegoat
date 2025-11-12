@@ -32,7 +32,7 @@ lazy val root = Project("sbt-scapegoat", file("."))
       scriptedLaunchOpts.value ++ Seq("-Dplugin.version=" + version.value)
     },
     scriptedBufferLog := false,
-    crossScalaVersions += "3.7.3",
+    crossScalaVersions += "3.7.4",
     pluginCrossBuild / sbtVersion := {
       scalaBinaryVersion.value match {
         case "2.12" => (pluginCrossBuild / sbtVersion).value
