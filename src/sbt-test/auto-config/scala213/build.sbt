@@ -6,8 +6,8 @@ lazy val root = (project in file("."))
       val dependencies = libraryDependencies.value
       val scapegoat =
         dependencies.find(d => d.organization == "com.sksamuel.scapegoat" && d.name == "scalac-scapegoat-plugin")
-      if (!scapegoat.map(_.revision).contains("3.3.2")) {
-        sys.error(s"Expected Scapegoat version to default to 3.3.2 for scala ${scalaVersion.value}, got: ${scapegoat}")
+      if (!scapegoat.map(_.revision).contains("3.3.4")) {
+        sys.error(s"Expected Scapegoat version to default to 3.3.4 for scala ${scalaVersion.value}, got: ${scapegoat}")
       }
     },
   )
