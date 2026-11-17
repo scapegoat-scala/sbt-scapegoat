@@ -3,20 +3,24 @@ on:
   pull_request:
 jobs:
   test:
-    name: Test using JDK ${{matrix.java}} and sbt ${{matrix.sbt}}
+    name: Test using JDK ${{matrix.java}} and Scala ${{matrix.scala}}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         scala:
-          - 2.x
+          - 2.12.x
           - 3.x
+        java: [8, 17, 21, 25]
+        exclude:
+          - java: 8
+            scala: 3.x
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          distribution: adopt
-          java-version: 8
+          distribution: temurin
+          java-version: ${{matrix.java}}
       - uses: sbt/setup-sbt@v1
       - uses: actions/cache@v4
         with:
