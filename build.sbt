@@ -19,7 +19,7 @@ inThisBuild(
         url("https://github.com/sksamuel"),
       ),
     ),
-    scalaVersion := "2.12.20",
+    scalaVersion := "2.12.21",
   ),
 )
 
@@ -32,13 +32,17 @@ lazy val root = Project("sbt-scapegoat", file("."))
       scriptedLaunchOpts.value ++ Seq("-Dplugin.version=" + version.value)
     },
     scriptedBufferLog := false,
-    crossScalaVersions += "3.7.3",
+    crossScalaVersions := Seq("2.12.21", "3.9.0"),
+    scalacOptions ++= {
+      if (scalaBinaryVersion.value == "2.12") Seq("-Xsource:3", "-release:8") else Nil
+    },
     pluginCrossBuild / sbtVersion := {
       scalaBinaryVersion.value match {
-        case "2.12" => (pluginCrossBuild / sbtVersion).value
-        case _ => "2.0.0-RC6"
+        case "2.12" => "1.11.7"
+        case _ => "2.1.0"
       }
     },
+    scriptedSbt := (if (scalaBinaryVersion.value == "2.12") "1.13.1" else "2.1.0"),
     Test / publishArtifact := false,
     Test / parallelExecution := false,
   )
