@@ -1,7 +1,7 @@
 name: Release
 on:
   push:
-    branches: [master]
+    branches: [master, sonatype-releases]
     tags: ["*"]
 jobs:
   release:
@@ -15,6 +15,7 @@ jobs:
           distribution: adopt
           java-version: 8
       - uses: sbt/setup-sbt@v1
+      - run: sbt "show publishTo"
       - run: sbt ci-release
         env:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
